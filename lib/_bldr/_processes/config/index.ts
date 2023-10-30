@@ -14,9 +14,9 @@ import { State } from '../state';
 // fetch json file for copado connection details
 var copadoConfig = require('../../../../../copado/copado.json');
 
-const { setEncryption, encrypt, decrypt } = new Crypto();
+const { setEncryption, encrypt } = new Crypto();
 
-const { getState, allowTracking, debug } = new State();
+const {  allowTracking, debug } = new State();
 
 /**
  * Handles all Configuration commands
@@ -31,10 +31,9 @@ export class Config {
      * Tests/Gathers all child business unit Names and MIDs
      * Saves configuration to config file
      * Sets configuration to state management file
-     * @param argv
      *
      */
-    initiateConfiguration = async (argv: Argv) => {
+    initiateConfiguration = async () => {
         try {
             displayLine(
                 'For Web App Configurations, use the following as the Redirect URI in your Installed Package',
@@ -166,12 +165,11 @@ export class Config {
             displayLine('Please provide an instance name', 'error');
         }
 
-        // Retrieve Configuration from PSW Manager
-        //let config = instance && (await getPassword('bldr', instance));
         /**
          * @description Copado extending, by setting CLI to use JSON config in root
          * copado/copado.json file for configuration of environments
          */
+        // TODO: get root of repo and find configuration files
         let config = instance && copadoConfig;
 
         if (!config) {
@@ -188,8 +186,6 @@ export class Config {
          * @description Copado extending, by removing decrypt LibSecret is no
          * longer needed to authenticate against the SFMC instance
          */
-        configJSON.apiClientId = await configJSON.apiClientId;
-        configJSON.apiClientSecret = await configJSON.apiClientSecret;
 
         if (configJSON && show) {
             // Cut string off to only show first 5 characters
@@ -266,9 +262,9 @@ export class Config {
                     }
 
                     // Delete entry for instance
-                    await deletePasswordSync('bldr', instance);
+                    deletePasswordSync('bldr', instance);
                     // Check that entry no longer exists to confirm delete
-                    let checkDeletion = await getPasswordSync('bldr', instance);
+                    let checkDeletion = getPasswordSync('bldr', instance);
 
                     !checkDeletion
                         ? displayLine(`${instance} was Deleted Successfully.`, 'success')

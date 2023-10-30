@@ -1,6 +1,6 @@
 {
-    "name": "@basetime/bldr-sfmc",
-    "version": "1.8.5",
+    "name": "@copado/bldr-sfmc",
+    "version": "1.9.0",
     "description": "CLI application for SFMC Development workflow and package deployment",
     "main": "./dist/bin/index.js",
     "scripts": {
@@ -20,6 +20,7 @@
         "bldr": "./dist/bin/index.js"
     },
     "author": "Basetime.io",
+    "sourceType": "module",
     "repository": {
         "type": "git",
         "url": "https://github.com/basetime/bldr-sfmc.git"
