@@ -25,7 +25,7 @@ const state_1 = require("../state");
 const path_1 = __importDefault(require("path"));
 const contentBuilderInitiate = require('../../../_utils/options/projectInitiate_contentBuilder');
 const dataExtensionInitiate = require('../../../_utils/options/projectInitiate_dataExtension');
-const { isVerbose, allowTracking, debug } = new state_1.State();
+const { allowTracking, debug } = new state_1.State();
 /**
  * Notes June 2
  * Left off replacing matchedValue references with the new bldr IDs
@@ -36,7 +36,7 @@ class Initiate {
     constructor() {
         this.updateKeys = () => __awaiter(this, void 0, void 0, function* () {
             try {
-                const rootPath = yield (0, fileSystem_1.getRootPath)();
+                const rootPath = (0, fileSystem_1.getRootPath)();
                 const ctxFiles = yield (0, fileSystem_1.getAllFiles)();
                 for (const c in ctxFiles) {
                     const filePath = ctxFiles[c];
@@ -45,13 +45,13 @@ class Initiate {
                     fs_1.default.writeFileSync(filePath, content);
                 }
                 const manifestJSON = yield (0, bldrFileSystem_1.readManifest)();
-                let manifestStr = JSON.stringify(manifestJSON);
-                let updatedManifest = JSON.parse(yield (0, bldrFileSystem_1.scrubBldrSfmcEnv)(manifestStr));
+                const manifestStr = JSON.stringify(manifestJSON);
+                const updatedManifest = JSON.parse(yield (0, bldrFileSystem_1.scrubBldrSfmcEnv)(manifestStr));
                 fs_1.default.writeFileSync(path_1.default.join(`${rootPath}.local.manifest.json`), JSON.stringify(updatedManifest, null, 2));
-                if (yield (0, fileSystem_1.fileExists)(`${rootPath}package.manifest.json`)) {
+                if ((0, fileSystem_1.fileExists)(`${rootPath}package.manifest.json`)) {
                     const pkgJSON = (0, bldrFileSystem_1.readPackageManifest)();
-                    let pkgStr = JSON.stringify(pkgJSON);
-                    let updatedPkg = JSON.parse(yield (0, bldrFileSystem_1.scrubBldrSfmcEnv)(pkgStr));
+                    const pkgStr = JSON.stringify(pkgJSON);
+                    const updatedPkg = JSON.parse(yield (0, bldrFileSystem_1.scrubBldrSfmcEnv)(pkgStr));
                     fs_1.default.writeFileSync(`${rootPath}package.manifest.json`, JSON.stringify(updatedPkg, null, 2));
                 }
             }
@@ -63,10 +63,8 @@ class Initiate {
             return (0, bldrFileSystem_1.createEnv)();
         };
         this.initiateContentBuilderProject = () => __awaiter(this, void 0, void 0, function* () {
-            const isWin = yield (0, _utils_1.isWindows)();
-            const slash = isWin ? '\\' : '/';
-            const rootPath = yield (0, fileSystem_1.getRootPath)();
-            const dirExists = yield (0, fileSystem_1.fileExists)(`${rootPath}Content Builder`);
+            const rootPath = (0, fileSystem_1.getRootPath)();
+            const dirExists = (0, fileSystem_1.fileExists)(`${rootPath}Content Builder`);
             const dirEmpty = dirExists && (yield (0, _utils_1.isDirEmpty)(`${rootPath}Content Builder`));
             if (!dirExists || dirEmpty) {
                 (0, yargs_interactive_1.default)()
@@ -79,7 +77,7 @@ class Initiate {
                         },
                     ];
                     // Create empty directories
-                    yield (0, bldrFileSystem_1.createAllDirectories)(folderPaths);
+                    (0, bldrFileSystem_1.createAllDirectories)(folderPaths);
                     // Update ManifestJSON file with responses
                     yield (0, manifestJSON_1.updateManifest)('contentBuilder', { folders: [], assets: [] });
                     if (initResults.createConfig) {
@@ -108,7 +106,7 @@ class Initiate {
                     },
                 ];
                 // Create empty directories
-                yield (0, bldrFileSystem_1.createAllDirectories)(folderPaths);
+                (0, bldrFileSystem_1.createAllDirectories)(folderPaths);
                 // Update ManifestJSON file with responses
                 yield (0, manifestJSON_1.updateManifest)(context, { folders: [], assets: [] });
                 const dataExtensionInit = {

@@ -32,7 +32,7 @@ export class State {
      * @param show
      * @returns
      */
-    getState = (key?: string, show?: Boolean) => {
+    getState = (key?: string, show?: boolean) => {
         try {
             const state = assignObject(state_conf.get());
 
@@ -139,11 +139,11 @@ export class State {
             });
 
             await displayLine(`BLDR is configured to collect basic analytics`, 'info');
-            await displayLine(
+            displayLine(
                 `Visit https://github.com/basetime/bldr-sfmc for more information on what is being captured`,
                 'info'
             );
-            await displayLine(
+            displayLine(
                 `If you wish to opt-out of analytics, run [ bldr config --analytics ] to disable this functionality`,
                 'info'
             );

@@ -27,10 +27,8 @@ import { displayLine, displayObject } from '../lib/_utils/display';
 import { DeploySwitch } from '../lib/_controllers/deploy';
 import { InitSwitch } from '../lib/_controllers/initiate';
 import { State } from '../lib/_bldr/_processes/state';
-import { Crypto } from '../lib/_bldr/_utils/crypto';
 import { Config } from '../lib/_bldr/_processes/config';
 
-const { setEncryption } = new Crypto();
 const { getInstanceConfiguration } = new Config();
 const { checkForTracking, getState, debug } = new State();
 
@@ -45,11 +43,11 @@ const argv = userInput.argv;
  *
  * @param {string} req
  * @param {object} argv
- * @param {object} store
  */
 const initCLI = async (req: string, argv: any) => {
     await checkForTracking();
     debug('User Request', 'info', { request: req, argument: argv });
+    // TODO: load configuration?
 
     if (!req) {
         if (argv.v) {
@@ -190,6 +188,7 @@ const initCLI = async (req: string, argv: any) => {
                 return;
             }
         }
+
         switch (req) {
             case 'init':
                 InitSwitch(argv);

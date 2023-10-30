@@ -16,7 +16,6 @@ const {
  *
  * @param {string} req
  * @param {object} argv
- * @param {object} store
  *
  */
 const ConfigSwitch = async (req: any, argv: Argv) => {
@@ -24,7 +23,7 @@ const ConfigSwitch = async (req: any, argv: Argv) => {
      * Configure New Instance
      */
     if (argv.n || argv.new) {
-        return initiateConfiguration(argv);
+        return initiateConfiguration();
     }
 
     /**

@@ -28,7 +28,6 @@ const { allowTracking } = new state_1.State();
  *
  * @param {string} req
  * @param {object} argv
- * @param {object} store
  *
  */
 const AutomationStudioSwitch = (req, argv) => __awaiter(void 0, void 0, void 0, function* () {

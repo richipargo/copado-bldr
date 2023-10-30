@@ -40,8 +40,8 @@ exports.fileExists = fileExists;
  * @returns
  */
 const getRootPath = () => {
-    let root = path_1.default.resolve('./');
-    let rootFolder = root.split(path_1.default.normalize('/')).pop();
+    const root = path_1.default.resolve('./');
+    const rootFolder = root.split(path_1.default.normalize('/')).pop();
     const rootArr = sfmcContext.sfmc_context_mapping.map(({ name }) => {
         if (rootFolder === name) {
             return root.split(name)[0];

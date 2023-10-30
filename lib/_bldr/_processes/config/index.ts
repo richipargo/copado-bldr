@@ -1,3 +1,5 @@
+import { join } from 'node:path';
+import { readFileSync } from 'fs';
 import { deletePasswordSync, findCredentials, getPassword, getPasswordSync, setPassword } from 'keytar-sync';
 import yargsInteractive from 'yargs-interactive';
 import { initiateBldrSDK } from '../../../_bldr_sdk';
@@ -5,18 +7,16 @@ import { state_conf } from '../../../_bldr_sdk/store';
 import { Argv } from '../../../_types/Argv';
 import { InstanceConfiguration } from '../../../_types/InstanceConfiguration';
 import { displayArrayOfStrings, displayLine, displayObject } from '../../../_utils/display';
+import { fileExists, getRootPath } from '../../../_utils/fileSystem';
 import { handleError } from '../../../_utils/handleError';
 import { incrementMetric } from '../../../_utils/metrics';
 import { config_new, config_remove } from '../../../_utils/options';
 import { Crypto } from '../../_utils/crypto';
 import { State } from '../state';
 
-// fetch json file for copado connection details
-var copadoConfig = require('../../../../../copado/copado.json');
-
 const { setEncryption, encrypt } = new Crypto();
 
-const {  allowTracking, debug } = new State();
+const { allowTracking, debug } = new State();
 
 /**
  * Handles all Configuration commands
@@ -153,14 +153,7 @@ export class Config {
     getInstanceConfiguration = async (
         instance: string,
         show?: boolean
-    ): Promise<{
-        apiClientId: string;
-        apiClientSecret: string;
-        parentMID: number;
-        mids: any[];
-        authURI: string;
-        configurationType: string;
-    }> => {
+    ): Promise<InstanceConfiguration> => {
         if (!instance) {
             displayLine('Please provide an instance name', 'error');
         }
@@ -169,19 +162,23 @@ export class Config {
          * @description Copado extending, by setting CLI to use JSON config in root
          * copado/copado.json file for configuration of environments
          */
-        // TODO: get root of repo and find configuration files
-        let config = instance && copadoConfig;
+        let config;
+        const rootPath = getRootPath() || './';
+
+        if (fileExists(join(rootPath, `${instance}.json`))) {
+            const json = readFileSync(join(rootPath, `${instance}.json`), 'utf8');
+
+            config = JSON.parse(json);
+        }
+        console.log(config);
 
         if (!config) {
             throw new Error(`No configurations found for ${instance}`);
         }
 
         // Transform string into parse-able JSON
-        let configJSON: InstanceConfiguration = config;
+        const configJSON: InstanceConfiguration = config;
 
-        // Decrypt Client_Id and Secret
-        //configJSON.apiClientId = await decrypt(configJSON.apiClientId);
-        //configJSON.apiClientSecret = await decrypt(configJSON.apiClientSecret);
         /**
          * @description Copado extending, by removing decrypt LibSecret is no
          * longer needed to authenticate against the SFMC instance
@@ -264,7 +261,7 @@ export class Config {
                     // Delete entry for instance
                     deletePasswordSync('bldr', instance);
                     // Check that entry no longer exists to confirm delete
-                    let checkDeletion = getPasswordSync('bldr', instance);
+                    const checkDeletion = getPasswordSync('bldr', instance);
 
                     !checkDeletion
                         ? displayLine(`${instance} was Deleted Successfully.`, 'success')
@@ -304,7 +301,7 @@ export class Config {
             }
 
             const initState = {
-                instance: instanceToSet,
+                instance: clientConfig.instance,
                 parentMID: clientConfig.parentMID,
                 activeMID: midToSet || clientConfig.parentMID,
             };

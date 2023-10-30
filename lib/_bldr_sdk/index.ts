@@ -12,8 +12,8 @@ import { SFMC_Client } from '@basetime/bldr-sfmc-sdk/lib/cli/types/sfmc_client';
 import { getPassword, setPassword } from 'keytar-sync';
 import { Config } from '../_bldr/_processes/config';
 import { State } from '../_bldr/_processes/state';
-import { isExpired } from '../_utils';
 import { displayLine } from '../_utils/display';
+import { state_conf } from './store';
 
 const { getState, debug } = new State();
 const { getInstanceConfiguration } = new Config();
@@ -209,7 +209,7 @@ const initiateBldrSDK = async (
             mid: activeMID,
         });
 
-        let stateConfiguration = await getInstanceConfiguration(stateInstance);
+        const stateConfiguration = await getInstanceConfiguration(stateInstance);
 
         debug('Current Configuration', 'info', {
             ...stateConfiguration,
@@ -219,15 +219,15 @@ const initiateBldrSDK = async (
 
         stateConfiguration.configurationType = stateConfiguration.configurationType || 'Server-to-Server';
 
-        //const currentSession = await getPassword('bldr', 'currentSession');
-        const currentSession = fs.readFileSync('token.json', 'utf8');
+        // const currentSession = await getPassword('bldr', 'currentSession');
+        const currentSession = fs.readFileSync('/tmp/token.json', 'utf8');
         const currentSessionJSON = currentSession && JSON.parse(currentSession);
         const currentAuthObject = currentSessionJSON && currentSessionJSON.authObject;
 
         debug('Current session', 'info', currentSession);
 
-        //Check if session is expired
-        let sessionExpired = true;
+        // Check if session is expired
+        const sessionExpired = true;
 
         debug('Session expired', 'info', sessionExpired);
 
@@ -263,7 +263,7 @@ const initiateBldrSDK = async (
                 debug('Requesting Authentication Token Refresh: request', 'info', sdkConfiguration);
 
                 const newSession = new BLDR(sdkConfiguration);
-                let accessToken = await newSession.sfmc.account.getAccessTokenResponse();
+                const accessToken = await newSession.sfmc.account.getAccessTokenResponse();
 
                 debug('Requesting Authentication Token Refresh: response', 'info', accessToken);
 
@@ -272,7 +272,7 @@ const initiateBldrSDK = async (
                 delete accessToken.client_id;
                 delete accessToken.client_secret;
 
-                let tokenJson = {
+                const tokenJson = {
                     instance: stateInstance,
                     authObject: accessToken,
                 };
@@ -280,7 +280,7 @@ const initiateBldrSDK = async (
                 debug('defined parent token JSON', 'info', tokenJson);
 
                 fs.writeFile(
-                    'token.json',
+                    '/tmp/token.json',
                     JSON.stringify(tokenJson),
                     {
                         encoding: 'utf8',
@@ -291,10 +291,12 @@ const initiateBldrSDK = async (
                         if (err) console.log(err);
                         else {
                             debug('File written successfully', 'info', tokenJson);
-                            debug('Reading json file', 'info', JSON.parse(fs.readFileSync('token.json', 'utf8')));
+                            debug('Reading json file', 'info', JSON.parse(fs.readFileSync('/tmp/token.json', 'utf8')));
                         }
                     }
                 );
+
+                // TODO: store token somewhere that's not a file
                 /**
                 await setPassword(
                     'bldr',

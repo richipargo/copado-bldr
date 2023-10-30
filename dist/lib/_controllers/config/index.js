@@ -19,7 +19,6 @@ const { initiateConfiguration, getInstanceConfiguration, listInstanceConfigurati
  *
  * @param {string} req
  * @param {object} argv
- * @param {object} store
  *
  */
 const ConfigSwitch = (req, argv) => __awaiter(void 0, void 0, void 0, function* () {
@@ -27,7 +26,7 @@ const ConfigSwitch = (req, argv) => __awaiter(void 0, void 0, void 0, function* 
      * Configure New Instance
      */
     if (argv.n || argv.new) {
-        return initiateConfiguration(argv);
+        return initiateConfiguration();
     }
     /**
      * Get Configuration by Instance key

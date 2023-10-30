@@ -13,20 +13,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Config = void 0;
+const node_path_1 = require("node:path");
+const fs_1 = require("fs");
 const keytar_sync_1 = require("keytar-sync");
 const yargs_interactive_1 = __importDefault(require("yargs-interactive"));
 const _bldr_sdk_1 = require("../../../_bldr_sdk");
 const store_1 = require("../../../_bldr_sdk/store");
 const display_1 = require("../../../_utils/display");
+const fileSystem_1 = require("../../../_utils/fileSystem");
 const handleError_1 = require("../../../_utils/handleError");
 const metrics_1 = require("../../../_utils/metrics");
 const options_1 = require("../../../_utils/options");
 const crypto_1 = require("../../_utils/crypto");
 const state_1 = require("../state");
-// fetch json file for copado connection details
-var copadoConfig = require('../../../../../copado/copado.json');
-const { setEncryption, encrypt, decrypt } = new crypto_1.Crypto();
-const { getState, allowTracking, debug } = new state_1.State();
+const { setEncryption, encrypt } = new crypto_1.Crypto();
+const { allowTracking, debug } = new state_1.State();
 /**
  * Handles all Configuration commands
  * @property {object} coreConfiguration
@@ -40,10 +41,9 @@ class Config {
          * Tests/Gathers all child business unit Names and MIDs
          * Saves configuration to config file
          * Sets configuration to state management file
-         * @param argv
          *
          */
-        this.initiateConfiguration = (argv) => __awaiter(this, void 0, void 0, function* () {
+        this.initiateConfiguration = () => __awaiter(this, void 0, void 0, function* () {
             try {
                 (0, display_1.displayLine)('For Web App Configurations, use the following as the Redirect URI in your Installed Package', 'info');
                 (0, display_1.displayLine)('https://bldr.io/cli/sfmc/authenticate/', 'progress');
@@ -128,27 +128,26 @@ class Config {
             if (!instance) {
                 (0, display_1.displayLine)('Please provide an instance name', 'error');
             }
-            // Retrieve Configuration from PSW Manager
-            //let config = instance && (await getPassword('bldr', instance));
             /**
              * @description Copado extending, by setting CLI to use JSON config in root
              * copado/copado.json file for configuration of environments
              */
-            let config = instance && copadoConfig;
+            let config;
+            const rootPath = (0, fileSystem_1.getRootPath)() || './';
+            if ((0, fileSystem_1.fileExists)((0, node_path_1.join)(rootPath, `${instance}.json`))) {
+                const json = (0, fs_1.readFileSync)((0, node_path_1.join)(rootPath, `${instance}.json`), 'utf8');
+                config = JSON.parse(json);
+            }
+            console.log(config);
             if (!config) {
                 throw new Error(`No configurations found for ${instance}`);
             }
             // Transform string into parse-able JSON
-            let configJSON = config;
-            // Decrypt Client_Id and Secret
-            //configJSON.apiClientId = await decrypt(configJSON.apiClientId);
-            //configJSON.apiClientSecret = await decrypt(configJSON.apiClientSecret);
+            const configJSON = config;
             /**
              * @description Copado extending, by removing decrypt LibSecret is no
              * longer needed to authenticate against the SFMC instance
              */
-            configJSON.apiClientId = yield configJSON.apiClientId;
-            configJSON.apiClientSecret = yield configJSON.apiClientSecret;
             if (configJSON && show) {
                 // Cut string off to only show first 5 characters
                 configJSON.apiClientId = configJSON.apiClientId.substring(0, 5);
@@ -214,9 +213,9 @@ class Config {
                         return;
                     }
                     // Delete entry for instance
-                    yield (0, keytar_sync_1.deletePasswordSync)('bldr', instance);
+                    (0, keytar_sync_1.deletePasswordSync)('bldr', instance);
                     // Check that entry no longer exists to confirm delete
-                    let checkDeletion = yield (0, keytar_sync_1.getPasswordSync)('bldr', instance);
+                    const checkDeletion = (0, keytar_sync_1.getPasswordSync)('bldr', instance);
                     !checkDeletion
                         ? (0, display_1.displayLine)(`${instance} was Deleted Successfully.`, 'success')
                         : (0, display_1.displayLine)(`${instance} was Not Deleted.`, 'error');
@@ -249,7 +248,7 @@ class Config {
                     throw new Error(`${midToSet} is not a Valid MID`);
                 }
                 const initState = {
-                    instance: instanceToSet,
+                    instance: clientConfig.instance,
                     parentMID: clientConfig.parentMID,
                     activeMID: midToSet || clientConfig.parentMID,
                 };

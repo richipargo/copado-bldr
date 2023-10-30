@@ -40,9 +40,7 @@ const display_1 = require("../lib/_utils/display");
 const deploy_1 = require("../lib/_controllers/deploy");
 const initiate_1 = require("../lib/_controllers/initiate");
 const state_1 = require("../lib/_bldr/_processes/state");
-const crypto_1 = require("../lib/_bldr/_utils/crypto");
 const config_2 = require("../lib/_bldr/_processes/config");
-const { setEncryption } = new crypto_1.Crypto();
 const { getInstanceConfiguration } = new config_2.Config();
 const { checkForTracking, getState, debug } = new state_1.State();
 // Parse requests and input arguments
@@ -54,11 +52,11 @@ const argv = userInput.argv;
  *
  * @param {string} req
  * @param {object} argv
- * @param {object} store
  */
 const initCLI = (req, argv) => __awaiter(void 0, void 0, void 0, function* () {
     yield checkForTracking();
     debug('User Request', 'info', { request: req, argument: argv });
+    console.log(req);
     if (!req) {
         if (argv.v) {
             (0, display_1.displayLine)(`bldr version: ${version_1.version}`, 'info');

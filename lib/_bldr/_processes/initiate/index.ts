@@ -16,7 +16,7 @@ import { State } from '../state';
 import path from 'path';
 const contentBuilderInitiate = require('../../../_utils/options/projectInitiate_contentBuilder');
 const dataExtensionInitiate = require('../../../_utils/options/projectInitiate_dataExtension');
-const { isVerbose, allowTracking, debug } = new State();
+const { allowTracking, debug } = new State();
 
 /**
  * Notes June 2
@@ -29,7 +29,7 @@ export class Initiate {
 
     updateKeys = async () => {
         try {
-            const rootPath = await getRootPath();
+            const rootPath = getRootPath();
             const ctxFiles = await getAllFiles();
 
             for (const c in ctxFiles) {
@@ -40,15 +40,16 @@ export class Initiate {
             }
 
             const manifestJSON = await readManifest();
-            let manifestStr = JSON.stringify(manifestJSON);
-            let updatedManifest = JSON.parse(await scrubBldrSfmcEnv(manifestStr));
+            const manifestStr = JSON.stringify(manifestJSON);
+            const updatedManifest = JSON.parse(await scrubBldrSfmcEnv(manifestStr));
 
             fs.writeFileSync(path.join(`${rootPath}.local.manifest.json`), JSON.stringify(updatedManifest, null, 2));
 
-            if (await fileExists(`${rootPath}package.manifest.json`)) {
+            if (fileExists(`${rootPath}package.manifest.json`)) {
                 const pkgJSON = readPackageManifest();
-                let pkgStr = JSON.stringify(pkgJSON);
-                let updatedPkg = JSON.parse(await scrubBldrSfmcEnv(pkgStr));
+                const pkgStr = JSON.stringify(pkgJSON);
+                const updatedPkg = JSON.parse(await scrubBldrSfmcEnv(pkgStr));
+
                 fs.writeFileSync(`${rootPath}package.manifest.json`, JSON.stringify(updatedPkg, null, 2));
             }
         } catch (err: any) {
@@ -61,10 +62,8 @@ export class Initiate {
     };
 
     initiateContentBuilderProject = async () => {
-        const isWin = await isWindows();
-        const slash = isWin ? '\\' : '/';
-        const rootPath = await getRootPath();
-        const dirExists = await fileExists(`${rootPath}Content Builder`);
+        const rootPath = getRootPath();
+        const dirExists = fileExists(`${rootPath}Content Builder`);
         const dirEmpty = dirExists && (await isDirEmpty(`${rootPath}Content Builder`));
 
         if (!dirExists || dirEmpty) {
@@ -79,7 +78,7 @@ export class Initiate {
                     ];
 
                     // Create empty directories
-                    await createAllDirectories(folderPaths);
+                    createAllDirectories(folderPaths);
 
                     // Update ManifestJSON file with responses
                     await updateManifest('contentBuilder', { folders: [], assets: [] });
@@ -112,7 +111,7 @@ export class Initiate {
                 ];
 
                 // Create empty directories
-                await createAllDirectories(folderPaths);
+                createAllDirectories(folderPaths);
                 // Update ManifestJSON file with responses
 
                 await updateManifest(context, { folders: [], assets: [] });
@@ -129,10 +128,10 @@ export class Initiate {
                         defaultValue: string;
                         fieldType: string;
                         maxLength: string;
-                        isRequired: Boolean;
-                        isPrimaryKey: Boolean;
+                        isRequired: boolean;
+                        isPrimaryKey: boolean;
                     }[];
-                    isSendable?: Boolean;
+                    isSendable?: boolean;
                     sendableDataExtensionField?: {
                         name: string;
                         fieldType: string;
@@ -142,9 +141,9 @@ export class Initiate {
                     };
                     dataRetentionPeriodLength?: number;
                     dataRetentionPeriod?: string;
-                    rowBasedRetention?: Boolean;
-                    resetRetentionPeriodOnImport?: Boolean;
-                    deleteAtEndOfRetentionPeriod?: Boolean;
+                    rowBasedRetention?: boolean;
+                    resetRetentionPeriodOnImport?: boolean;
+                    deleteAtEndOfRetentionPeriod?: boolean;
                 } = {
                     name: initResults.dataExtensionName,
                     customerKey: initResults.dataExtensionName,

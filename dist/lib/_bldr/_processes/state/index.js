@@ -140,8 +140,8 @@ class State {
                     allowTracking: true,
                 });
                 yield (0, display_1.displayLine)(`BLDR is configured to collect basic analytics`, 'info');
-                yield (0, display_1.displayLine)(`Visit https://github.com/basetime/bldr-sfmc for more information on what is being captured`, 'info');
-                yield (0, display_1.displayLine)(`If you wish to opt-out of analytics, run [ bldr config --analytics ] to disable this functionality`, 'info');
+                (0, display_1.displayLine)(`Visit https://github.com/basetime/bldr-sfmc for more information on what is being captured`, 'info');
+                (0, display_1.displayLine)(`If you wish to opt-out of analytics, run [ bldr config --analytics ] to disable this functionality`, 'info');
             }
         });
         this.clearSession = () => __awaiter(this, void 0, void 0, function* () {

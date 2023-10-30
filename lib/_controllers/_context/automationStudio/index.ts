@@ -1,17 +1,13 @@
-import { SFMC_Content_Builder_Asset } from '@basetime/bldr-sfmc-sdk/lib/sfmc/types/objects/sfmc_content_builder_assets';
 import { MappingByActivityType } from '../../../_utils/bldrFileSystem/_context/automationStudio/automationActivities';
 import { Argv } from '../../../_types/Argv';
 import { initiateBldrSDK } from '../../../_bldr_sdk';
 import { displayLine, displayObject } from '../../../_utils/display';
-import { uniqueArrayByKey } from '../../../_bldr/_utils';
 import flatten from 'flat';
 import { SFMC_Automation } from '@basetime/bldr-sfmc-sdk/lib/cli/types/bldr_assets/sfmc_automation';
 import { createAutomationStudioEditableFiles } from '../../../_utils/bldrFileSystem/_context/automationStudio/CreateLocalFiles';
 import { createContentBuilderEditableFiles } from '../../../_utils/bldrFileSystem/_context/contentBuilder/CreateLocalFiles';
 
 import { updateManifest } from '../../../_utils/bldrFileSystem/manifestJSON';
-import { findPassword } from 'keytar-sync';
-import { update } from 'lodash';
 import { State } from '../../../_bldr/_processes/state';
 import { incrementMetric } from '../../../_utils/metrics';
 const { allowTracking } = new State();
@@ -21,7 +17,6 @@ const { allowTracking } = new State();
  *
  * @param {string} req
  * @param {object} argv
- * @param {object} store
  *
  */
 const AutomationStudioSwitch = async (req: any, argv: Argv) => {

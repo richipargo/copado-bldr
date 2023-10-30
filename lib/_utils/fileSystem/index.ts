@@ -26,13 +26,14 @@ const isProjectRoot = () => {
  * @returns
  */
 const fileExists = (filePath: string) => fs.existsSync(path.normalize(filePath));
+
 /**
  *
  * @returns
  */
 const getRootPath = () => {
-    let root = path.resolve('./');
-    let rootFolder = root.split(path.normalize('/')).pop();
+    const root = path.resolve('./');
+    const rootFolder = root.split(path.normalize('/')).pop();
     const rootArr = sfmcContext.sfmc_context_mapping.map(({ name }) => {
         if (rootFolder === name) {
             return root.split(name)[0];
