@@ -1,0 +1,86 @@
+{
+    "instance": "testauto",
+    "configurationType": "Server-to-Server",
+    "parentMID": 100014801,
+    "apiClientId": "0ocvl348ldeukbzogar7yelm",
+    "apiClientSecret": "H11FqKuvzTkFil4y1cN7sg6C",
+    "authURI": "https://mcm4-z51wqlh4f-3wnq5dncw5qn8.auth.marketingcloudapis.com/",
+    "mids": [
+        {
+            "name": "Capgemini DUPE",
+            "mid": 100014801
+        },
+        {
+            "name": "Capgemini Child 1 - Bootcamp",
+            "mid": 100035897
+        },
+        {
+            "name": "US East Coast",
+            "mid": 100041323
+        },
+        {
+            "name": "Un-used BU (undergoing maintenance)",
+            "mid": 515008981
+        },
+        {
+            "name": "Belron PoC1",
+            "mid": 515009116
+        },
+        {
+            "name": "JHK BU",
+            "mid": 515009182
+        },
+        {
+            "name": "Solution Demo",
+            "mid": 515009490
+        },
+        {
+            "name": "Belron Demo",
+            "mid": 515010302
+        },
+        {
+            "name": "Deborah CDP",
+            "mid": 515010364
+        },
+        {
+            "name": "Demo",
+            "mid": 515011087
+        },
+        {
+            "name": "WG CDP",
+            "mid": 515011441
+        },
+        {
+            "name": "Castrol ANZ",
+            "mid": 515011451
+        },
+        {
+            "name": "Castrol India",
+            "mid": 515011452
+        },
+        {
+            "name": "bp Castrol Global DEMO",
+            "mid": 515011454
+        },
+        {
+            "name": "OM BU",
+            "mid": 515011688
+        },
+        {
+            "name": "Isaac CDP",
+            "mid": 515011761
+        },
+        {
+            "name": "Capgemini DUPE",
+            "mid": 100014801
+        },
+        {
+            "name": "David IS",
+            "mid": 515011842
+        },
+        {
+            "name": "Lucas",
+            "mid": 515012994
+        }
+    ]
+}
