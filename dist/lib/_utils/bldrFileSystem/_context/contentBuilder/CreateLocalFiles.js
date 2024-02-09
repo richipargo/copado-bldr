@@ -30,39 +30,50 @@ const createContentBuilderEditableFiles = (assets) => __awaiter(void 0, void 0, 
             let ext;
             let dirPath;
             switch (assetType) {
-                case 'webpage':
-                case 'htmlemail':
-                    content = (asset && asset.views && asset.views.html && asset.views.html.content) || asset.content;
-                    ext = '.html';
+                case "webpage":
+                case "htmlemail":
+                    content =
+                        (asset &&
+                            asset.views &&
+                            asset.views.html &&
+                            asset.views.html.content) ||
+                            asset.content;
+                    ext = ".html";
                     dirPath = `${folderPath}/${fileName}${ext}`;
                     break;
-                case 'htmlblock':
-                case 'codesnippetblock':
-                case 'jscoderesource':
-                case 'jsoncoderesource':
-                case 'csscoderesource':
-                case 'textcoderesource':
-                case 'rsscoderesource':
-                case 'xmlcoderesource':
+                case "htmlblock":
+                case "codesnippetblock":
+                case "jscoderesource":
+                case "jsoncoderesource":
+                case "csscoderesource":
+                case "textcoderesource":
+                case "rsscoderesource":
+                case "xmlcoderesource":
                     content = asset.content;
-                    ext = '.html';
+                    ext = ".html";
                     dirPath = `${folderPath}/${fileName}${ext}`;
                     break;
-                case 'textonlyemail':
+                case "textonlyemail":
                     //@ts-ignore
-                    content = asset && asset.views && asset.views.text && asset.views.text.content;
-                    ext = '.html';
+                    content =
+                        asset &&
+                            asset.views &&
+                            asset.views.text &&
+                            asset.views.text.content;
+                    ext = ".html";
                     dirPath = `${folderPath}/${fileName}${ext}`;
                     break;
                 default:
                     content = JSON.stringify(asset, null, 2);
-                    ext = '.json';
+                    ext = ".json";
                     dirPath = `${folderPath}/${fileName}${ext}`;
             }
             content = yield updateFilesFromConfiguration(content);
             const createFileResult = yield (0, fileSystem_1.createFile)(dirPath, content);
-            createFileResult && (0, display_1.displayLine)(`Successfully Created [local]: ${asset.name}`, 'success');
-            !createFileResult && (0, display_1.displayLine)(`Error Creating File [local]: ${asset.name}`, 'error');
+            createFileResult &&
+                (0, display_1.displayLine)(`Successfully Created [local]: ${asset.name}`, "success");
+            !createFileResult &&
+                (0, display_1.displayLine)(`Error Creating File [local]: ${asset.name}`, "error");
         }
     }
     catch (err) {

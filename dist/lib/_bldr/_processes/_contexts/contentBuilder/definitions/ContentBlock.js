@@ -24,17 +24,18 @@ const SetContentBlock = (sfmcUpdateObject, updatedContent) => __awaiter(void 0, 
         content: updatedContent,
     };
     //Append keys for update flow
-    if (Object.prototype.hasOwnProperty.call(sfmcUpdateObject, 'id')) {
+    if (Object.prototype.hasOwnProperty.call(sfmcUpdateObject, "id")) {
         returnObject.id = sfmcUpdateObject.id;
     }
     //Append keys for update flow
-    if (Object.prototype.hasOwnProperty.call(sfmcUpdateObject, 'customerKey')) {
+    if (Object.prototype.hasOwnProperty.call(sfmcUpdateObject, "customerKey")) {
         returnObject.customerKey = sfmcUpdateObject.customerKey;
     }
-    if (Object.prototype.hasOwnProperty.call(sfmcUpdateObject, 'businessUnitAvailability')) {
-        returnObject.businessUnitAvailability = sfmcUpdateObject.businessUnitAvailability;
+    if (Object.prototype.hasOwnProperty.call(sfmcUpdateObject, "businessUnitAvailability")) {
+        returnObject.businessUnitAvailability =
+            sfmcUpdateObject.businessUnitAvailability;
     }
-    if (Object.prototype.hasOwnProperty.call(sfmcUpdateObject, 'sharingProperties')) {
+    if (Object.prototype.hasOwnProperty.call(sfmcUpdateObject, "sharingProperties")) {
         returnObject.sharingProperties = sfmcUpdateObject.sharingProperties;
     }
     return returnObject;

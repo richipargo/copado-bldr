@@ -1,8 +1,7 @@
-import { deletePassword, getPassword } from 'keytar-sync';
-import { state_conf } from '../../../_bldr_sdk/store';
-import { displayLine, displayObject } from '../../../_utils/display';
-import { incrementMetric } from '../../../_utils/metrics';
-import { assignObject } from '../../_utils';
+import { state_conf } from "../../../_bldr_sdk/store";
+import { displayLine, displayObject } from "../../../_utils/display";
+import { incrementMetric } from "../../../_utils/metrics";
+import { assignObject } from "../../_utils";
 
 // const Config = require('./Config');
 // const Column = require('../help/Column');
@@ -17,143 +16,152 @@ import { assignObject } from '../../_utils';
  * @param {function get(params:type) {}}
  */
 export class State {
-    constructor() {}
-    /**
-     *
-     * @returns
-     */
-    getCurrentInstance = async () => {
-        const currentState = await state_conf.get();
-        return currentState.instance;
-    };
-    /**
-     *
-     * @param key
-     * @param show
-     * @returns
-     */
-    getState = (key?: string, show?: boolean) => {
-        try {
-            const state = assignObject(state_conf.get());
+  constructor() {}
+  /**
+   *
+   * @returns
+   */
+  getCurrentInstance = async () => {
+    const currentState = await state_conf.get();
+    return currentState.instance;
+  };
+  /**
+   *
+   * @param key
+   * @param show
+   * @returns
+   */
+  getState = (key?: string, show?: Boolean) => {
+    try {
+      const state = assignObject(state_conf.get());
 
-            if (!key) {
-                if (show) {
-                    displayObject(state);
-                }
-                return state;
-            } else {
-                if (key && state_conf.has(key))
-                    if (show) {
-                        displayObject(state);
-                    }
-
-                return state[key];
-            }
-        } catch (err) {
-            console.log(err);
+      if (!key) {
+        if (show) {
+          displayObject(state);
         }
-    };
+        return state;
+      } else {
+        if (key && state_conf.has(key))
+          if (show) {
+            displayObject(state);
+          }
 
-    toggleVerbose = () => {
-        const isVerbose = state_conf.get('isVerbose');
-        if (isVerbose !== 'undefined') {
-            isVerbose && displayLine('Verbose messaging turned off', 'info');
-            !isVerbose && displayLine('Verbose messaging turned on', 'info');
-            state_conf.set({
-                isVerbose: !isVerbose,
-            });
-        } else {
-            state_conf.set({
-                isVerbose: false,
-            });
-        }
-    };
+        return state[key];
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-    isVerbose = () => {
-        return state_conf.get('isVerbose') || false;
-    };
+  toggleVerbose = () => {
+    const isVerbose = state_conf.get("isVerbose");
+    if (isVerbose !== "undefined") {
+      isVerbose && displayLine("Verbose messaging turned off", "info");
+      !isVerbose && displayLine("Verbose messaging turned on", "info");
+      state_conf.set({
+        isVerbose: !isVerbose,
+      });
+    } else {
+      state_conf.set({
+        isVerbose: false,
+      });
+    }
+  };
 
-    toggleTracking = () => {
-        const allowTracking = state_conf.get('allowTracking');
-        if (allowTracking !== 'undefined') {
-            allowTracking && displayLine('allowTracking turned off', 'info');
-            !allowTracking && displayLine('allowTracking turned on', 'info');
-            state_conf.set({
-                allowTracking: !allowTracking,
-            });
-        } else {
-            state_conf.set({
-                allowTracking: false,
-            });
-        }
-    };
+  isVerbose = () => {
+    return state_conf.get("isVerbose") || false;
+  };
 
-    allowTracking = () => {
-        return state_conf.get('allowTracking') || false;
-    };
+  toggleTracking = () => {
+    const allowTracking = state_conf.get("allowTracking");
+    if (allowTracking !== "undefined") {
+      allowTracking && displayLine("allowTracking turned off", "info");
+      !allowTracking && displayLine("allowTracking turned on", "info");
+      state_conf.set({
+        allowTracking: !allowTracking,
+      });
+    } else {
+      state_conf.set({
+        allowTracking: false,
+      });
+    }
+  };
 
-    toggleDebug = () => {
-        const debugMode = state_conf.get('debugMode');
-        if (debugMode !== 'undefined') {
-            debugMode && displayLine('debugMode turned off', 'info');
-            !debugMode && displayLine('debugMode turned on', 'info');
-            state_conf.set({
-                debugMode: !debugMode,
-            });
-        } else {
-            state_conf.set({
-                debugMode: false,
-            });
-        }
-    };
+  allowTracking = () => {
+    return state_conf.get("allowTracking") || false;
+  };
 
-    debugMode = () => {
-        return state_conf.get('debugMode') || false;
-    };
+  toggleDebug = () => {
+    const debugMode = state_conf.get("debugMode");
+    if (debugMode !== "undefined") {
+      debugMode && displayLine("debugMode turned off", "info");
+      !debugMode && displayLine("debugMode turned on", "info");
+      state_conf.set({
+        debugMode: !debugMode,
+      });
+    } else {
+      state_conf.set({
+        debugMode: false,
+      });
+    }
+  };
 
-    debug = (debugContext: string, debugStatus: 'success' | 'error' | 'info', output: any) => {
-        const debug = this.debugMode();
-        if (!debug) {
-            return;
-        }
+  debugMode = () => {
+    return state_conf.get("debugMode") || false;
+  };
 
-        try {
-            displayLine(debugContext, debugStatus);
-            if (output && output.JSON && output.JSON.Results) {
-                console.log(JSON.stringify(output.JSON.Results, null, 2));
-                return;
-            }
+  debug = (
+    debugContext: string,
+    debugStatus: "success" | "error" | "info",
+    output: any
+  ) => {
+    const debug = this.debugMode();
+    if (!debug) {
+      return;
+    }
 
-            typeof output === 'string' ? console.log(output) : console.log(JSON.stringify(output, null, 2));
-        } catch (err) {
-            console.log(output);
-        }
-    };
+    try {
+      displayLine(debugContext, debugStatus);
+      if (output && output.JSON && output.JSON.Results) {
+        console.log(JSON.stringify(output.JSON.Results, null, 2));
+        return;
+      }
 
-    checkForTracking = async () => {
-        const hasAllowTracking = state_conf.has('allowTracking');
-        if (!hasAllowTracking) {
-            await incrementMetric('downloads');
-            state_conf.set({
-                allowTracking: true,
-            });
+      typeof output === "string"
+        ? console.log(output)
+        : console.log(JSON.stringify(output, null, 2));
+    } catch (err) {
+      console.log(output);
+    }
+  };
 
-            await displayLine(`BLDR is configured to collect basic analytics`, 'info');
-            displayLine(
-                `Visit https://github.com/basetime/bldr-sfmc for more information on what is being captured`,
-                'info'
-            );
-            displayLine(
-                `If you wish to opt-out of analytics, run [ bldr config --analytics ] to disable this functionality`,
-                'info'
-            );
-        }
-    };
+  checkForTracking = async () => {
+    const hasAllowTracking = state_conf.has("allowTracking");
+    if (!hasAllowTracking) {
+      await incrementMetric("downloads");
+      state_conf.set({
+        allowTracking: true,
+      });
 
-    clearSession = async () => {
-        await deletePassword('bldr', 'currentSession');
+      await displayLine(
+        `BLDR is configured to collect basic analytics`,
+        "info"
+      );
+      await displayLine(
+        `Visit https://github.com/basetime/bldr-sfmc for more information on what is being captured`,
+        "info"
+      );
+      await displayLine(
+        `If you wish to opt-out of analytics, run [ bldr config --analytics ] to disable this functionality`,
+        "info"
+      );
+    }
+  };
 
-        const sessionDeleted = (await getPassword('bldr', 'currentSession')) ? false : true;
-        return sessionDeleted;
-    };
+  clearSession = async () => {
+    //await deletePassword("bldr", "currentSession");
+
+    const sessionDeleted = true;
+    return sessionDeleted;
+  };
 }

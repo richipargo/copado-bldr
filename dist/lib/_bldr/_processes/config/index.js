@@ -13,21 +13,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Config = void 0;
-const node_path_1 = require("node:path");
-const fs_1 = require("fs");
-const keytar_sync_1 = require("keytar-sync");
+/**import {
+  deletePasswordSync,
+  findCredentials,
+  getPassword,
+  getPasswordSync,
+  setPassword,
+} from "keytar-sync";**/
 const yargs_interactive_1 = __importDefault(require("yargs-interactive"));
 const _bldr_sdk_1 = require("../../../_bldr_sdk");
 const store_1 = require("../../../_bldr_sdk/store");
 const display_1 = require("../../../_utils/display");
-const fileSystem_1 = require("../../../_utils/fileSystem");
 const handleError_1 = require("../../../_utils/handleError");
 const metrics_1 = require("../../../_utils/metrics");
 const options_1 = require("../../../_utils/options");
 const crypto_1 = require("../../_utils/crypto");
 const state_1 = require("../state");
-const { setEncryption, encrypt } = new crypto_1.Crypto();
-const { allowTracking, debug } = new state_1.State();
+// fetch json file for copado connection details
+var copadoConfig = require("../../../../../copado/copado.json");
+const { setEncryption, encrypt, decrypt } = new crypto_1.Crypto();
+const { getState, allowTracking, debug } = new state_1.State();
 /**
  * Handles all Configuration commands
  * @property {object} coreConfiguration
@@ -41,14 +46,15 @@ class Config {
          * Tests/Gathers all child business unit Names and MIDs
          * Saves configuration to config file
          * Sets configuration to state management file
+         * @param argv
          *
          */
-        this.initiateConfiguration = () => __awaiter(this, void 0, void 0, function* () {
+        this.initiateConfiguration = (argv) => __awaiter(this, void 0, void 0, function* () {
             try {
-                (0, display_1.displayLine)('For Web App Configurations, use the following as the Redirect URI in your Installed Package', 'info');
-                (0, display_1.displayLine)('https://bldr.io/cli/sfmc/authenticate/', 'progress');
+                (0, display_1.displayLine)("For Web App Configurations, use the following as the Redirect URI in your Installed Package", "info");
+                (0, display_1.displayLine)("https://bldr.io/cli/sfmc/authenticate/", "progress");
                 (0, yargs_interactive_1.default)()
-                    .usage('$bldr config [args]')
+                    .usage("$bldr config [args]")
                     .interactive(options_1.config_new)
                     .then((configResults) => __awaiter(this, void 0, void 0, function* () {
                     // Check for encryption entries in psw mgmt
@@ -63,7 +69,7 @@ class Config {
                         apiClientSecret: configResults.apiClientSecret,
                         authURI: configResults.authURI,
                     };
-                    (0, display_1.displayLine)('Testing Configuration...');
+                    (0, display_1.displayLine)("Testing Configuration...");
                     const sdk = yield (0, _bldr_sdk_1.initiateBldrSDK)({
                         client_id: configured.apiClientId,
                         client_secret: configured.apiClientSecret,
@@ -72,17 +78,18 @@ class Config {
                     }, configured.instance, configured.configurationType);
                     // Throw Error if SDK Fails to Load
                     if (!sdk) {
-                        (0, display_1.displayLine)('Unable to test configuration. Please review and retry.', 'error');
+                        (0, display_1.displayLine)("Unable to test configuration. Please review and retry.", "error");
                         return;
                     }
-                    (0, display_1.displayLine)('Gathering Business Unit Details...');
+                    (0, display_1.displayLine)("Gathering Business Unit Details...");
                     // Get All Business Unit Details from provided credentials
                     const getAllBusinessUnitDetails = yield sdk.sfmc.account.getAllBusinessUnitDetails();
-                    debug('Business Unit Return', 'info', getAllBusinessUnitDetails);
+                    debug("Business Unit Return", "info", getAllBusinessUnitDetails);
                     // Throw Error if there are issues with getting Business Unit Details
                     if (!Array.isArray(getAllBusinessUnitDetails) ||
-                        (Array.isArray(getAllBusinessUnitDetails) && !getAllBusinessUnitDetails.length)) {
-                        throw new Error('Unable to get Instance Details. Please review credentials.');
+                        (Array.isArray(getAllBusinessUnitDetails) &&
+                            !getAllBusinessUnitDetails.length)) {
+                        throw new Error("Unable to get Instance Details. Please review credentials.");
                     }
                     // Isolate each Business Unit Name and MID for stored configuration
                     const instanceBusinessUnits = Array.isArray(getAllBusinessUnitDetails) &&
@@ -95,25 +102,32 @@ class Config {
                         });
                     // Encrypt Configuration object
                     const encryptedConfiguration = Object.assign(Object.assign({}, configured), { mids: instanceBusinessUnits, apiClientId: yield encrypt(configResults.apiClientId), apiClientSecret: yield encrypt(configResults.apiClientSecret) });
-                    debug('Encrypted Configuration', 'info', encryptedConfiguration);
+                    debug("Encrypted Configuration", "info", encryptedConfiguration);
                     // Store credentials in users PSW Management
                     // OSX Keychain Access
                     // Windows Credential Manager
-                    yield (0, keytar_sync_1.setPassword)('bldr', configured.instance, JSON.stringify(encryptedConfiguration));
-                    const credentialCheck = yield (0, keytar_sync_1.getPassword)('bldr', configured.instance);
-                    debug('Check Credentials Saved', 'info', credentialCheck);
+                    /**await setPassword(
+                      "bldr",
+                      configured.instance,
+                      JSON.stringify(encryptedConfiguration)
+                    );**/
+                    /**const credentialCheck = await getPassword(
+                      "bldr",
+                      configured.instance
+                    );
+                    debug("Check Credentials Saved", "info", credentialCheck);**/
                     // Set newly configured instance to Current State
                     yield store_1.state_conf.set({
                         instance: configured.instance,
                         parentMID: configured.parentMID,
                         activeMID: configured.parentMID,
                     });
-                    (0, display_1.displayLine)(`${configured.instance} Configuration Saved`, 'success');
-                    allowTracking() && (0, metrics_1.incrementMetric)('req_command_config');
+                    (0, display_1.displayLine)(`${configured.instance} Configuration Saved`, "success");
+                    allowTracking() && (0, metrics_1.incrementMetric)("req_command_config");
                 }));
             }
             catch (err) {
-                err.message && (0, display_1.displayLine)(err.message, 'error');
+                err.message && (0, display_1.displayLine)(err.message, "error");
                 return err;
             }
         });
@@ -126,33 +140,34 @@ class Config {
          */
         this.getInstanceConfiguration = (instance, show) => __awaiter(this, void 0, void 0, function* () {
             if (!instance) {
-                (0, display_1.displayLine)('Please provide an instance name', 'error');
+                (0, display_1.displayLine)("Please provide an instance name", "error");
             }
+            // Retrieve Configuration from PSW Manager
+            //let config = instance && (await getPassword('bldr', instance));
             /**
              * @description Copado extending, by setting CLI to use JSON config in root
              * copado/copado.json file for configuration of environments
              */
-            let config;
-            const rootPath = (0, fileSystem_1.getRootPath)() || './';
-            if ((0, fileSystem_1.fileExists)((0, node_path_1.join)(rootPath, `${instance}.json`))) {
-                const json = (0, fs_1.readFileSync)((0, node_path_1.join)(rootPath, `${instance}.json`), 'utf8');
-                config = JSON.parse(json);
-            }
-            console.log(config);
+            let config = instance && copadoConfig;
             if (!config) {
                 throw new Error(`No configurations found for ${instance}`);
             }
             // Transform string into parse-able JSON
-            const configJSON = config;
+            let configJSON = config;
+            // Decrypt Client_Id and Secret
+            //configJSON.apiClientId = await decrypt(configJSON.apiClientId);
+            //configJSON.apiClientSecret = await decrypt(configJSON.apiClientSecret);
             /**
              * @description Copado extending, by removing decrypt LibSecret is no
              * longer needed to authenticate against the SFMC instance
              */
+            configJSON.apiClientId = yield configJSON.apiClientId;
+            configJSON.apiClientSecret = yield configJSON.apiClientSecret;
             if (configJSON && show) {
                 // Cut string off to only show first 5 characters
                 configJSON.apiClientId = configJSON.apiClientId.substring(0, 5);
                 configJSON.apiClientSecret = configJSON.apiClientSecret.substring(0, 5);
-                (0, display_1.displayLine)(`Instance Details (showing first 5 characters of credentials)`, 'info');
+                (0, display_1.displayLine)(`Instance Details (showing first 5 characters of credentials)`, "info");
                 (0, display_1.displayObject)(configJSON);
                 configJSON.mids.forEach((mid) => (0, display_1.displayObject)(mid));
             }
@@ -164,24 +179,25 @@ class Config {
          */
         this.listInstanceConfiguration = (argv) => __awaiter(this, void 0, void 0, function* () {
             // If a value is provided pass to the getInstanceConfiguration function to retrieve and display
-            if ((argv.l && typeof argv.l === 'string') || (argv.list && typeof argv.list === 'string')) {
-                const instanceStr = argv.l || argv.list || '';
+            if ((argv.l && typeof argv.l === "string") ||
+                (argv.list && typeof argv.list === "string")) {
+                const instanceStr = argv.l || argv.list || "";
                 this.getInstanceConfiguration(instanceStr, true);
             }
             // If no value is provided get all stored credentials and pull the instance names
-            const instanceArr = (yield (0, keytar_sync_1.findCredentials)('bldr'))
+            const instanceArr = (yield findCredentials("bldr"))
                 .map((item) => {
-                if (item.account !== 'io' && item.account !== 'salty') {
+                if (item.account !== "io" && item.account !== "salty") {
                     return item.account;
                 }
             })
                 .filter(Boolean) || [];
             if (instanceArr.length) {
-                (0, display_1.displayLine)(`Configured Instances`, 'info');
+                (0, display_1.displayLine)(`Configured Instances`, "info");
                 (0, display_1.displayArrayOfStrings)(instanceArr);
             }
             else {
-                (0, display_1.displayLine)(`There are no Configured Instances`, 'info');
+                (0, display_1.displayLine)(`There are no Configured Instances`, "info");
             }
         });
         /**
@@ -192,33 +208,34 @@ class Config {
          */
         this.removeConfiguration = (argv) => __awaiter(this, void 0, void 0, function* () {
             try {
-                if ((argv.r && typeof argv.r !== 'string') || (argv.remove && typeof argv.remove !== 'string')) {
-                    (0, display_1.displayLine)(`Please provide an Instance Name to remove`, 'error');
+                if ((argv.r && typeof argv.r !== "string") ||
+                    (argv.remove && typeof argv.remove !== "string")) {
+                    (0, display_1.displayLine)(`Please provide an Instance Name to remove`, "error");
                     return;
                 }
                 // Retrieve Instance Name from input
                 const instance = argv.r ? argv.r : argv.remove ? argv.remove : null;
                 if (!instance) {
-                    (0, display_1.displayLine)(`Unable to find Instance Name in your request, please try again`, 'error');
+                    (0, display_1.displayLine)(`Unable to find Instance Name in your request, please try again`, "error");
                     return;
                 }
                 // Display configuration for verification
                 yield this.getInstanceConfiguration(instance, true);
                 // Verify the deletion of the displayed configuration
                 (0, yargs_interactive_1.default)()
-                    .usage('$0 <command> [args]')
+                    .usage("$0 <command> [args]")
                     .interactive((0, options_1.config_remove)(instance))
                     .then((result) => __awaiter(this, void 0, void 0, function* () {
                     if (!result.confirmDelete) {
                         return;
                     }
                     // Delete entry for instance
-                    (0, keytar_sync_1.deletePasswordSync)('bldr', instance);
+                    //await deletePasswordSync("bldr", instance);
                     // Check that entry no longer exists to confirm delete
-                    const checkDeletion = (0, keytar_sync_1.getPasswordSync)('bldr', instance);
+                    //let checkDeletion = await getPasswordSync("bldr", instance);
                     !checkDeletion
-                        ? (0, display_1.displayLine)(`${instance} was Deleted Successfully.`, 'success')
-                        : (0, display_1.displayLine)(`${instance} was Not Deleted.`, 'error');
+                        ? (0, display_1.displayLine)(`${instance} was Deleted Successfully.`, "success")
+                        : (0, display_1.displayLine)(`${instance} was Not Deleted.`, "error");
                 }));
                 return;
             }
@@ -236,8 +253,8 @@ class Config {
             try {
                 const instanceToSet = argv.s || argv.set;
                 const midToSet = argv.m || argv.mid || null;
-                if (typeof instanceToSet !== 'string') {
-                    (0, display_1.displayLine)('Please provide an Instance Name to Set.', 'error');
+                if (typeof instanceToSet !== "string") {
+                    (0, display_1.displayLine)("Please provide an Instance Name to Set.", "error");
                     return;
                 }
                 const clientConfig = yield this.getInstanceConfiguration(instanceToSet);
@@ -248,18 +265,18 @@ class Config {
                     throw new Error(`${midToSet} is not a Valid MID`);
                 }
                 const initState = {
-                    instance: clientConfig.instance,
+                    instance: instanceToSet,
                     parentMID: clientConfig.parentMID,
                     activeMID: midToSet || clientConfig.parentMID,
                 };
                 store_1.state_conf.set(initState);
-                (0, display_1.displayLine)(`${instanceToSet} has been set to target instance`, 'success');
+                (0, display_1.displayLine)(`${instanceToSet} has been set to target instance`, "success");
                 (0, display_1.displayObject)(initState);
             }
             catch (err) {
-                debug('Config Err', 'error', err);
-                (0, display_1.displayLine)(`There was an error setting your target instance`, 'error');
-                (0, display_1.displayLine)(err.message, 'error');
+                debug("Config Err", "error", err);
+                (0, display_1.displayLine)(`There was an error setting your target instance`, "error");
+                (0, display_1.displayLine)(err.message, "error");
             }
         });
     }

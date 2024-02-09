@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.state_conf = exports.stash_conf = void 0;
 const source_1 = __importDefault(require("conf/dist/source"));
 const stash_conf = new source_1.default({
-    configName: 'stash',
+    configName: "stash",
 });
 exports.stash_conf = stash_conf;
 const state_conf = new source_1.default({

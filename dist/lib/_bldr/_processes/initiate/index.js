@@ -23,9 +23,9 @@ const metrics_1 = require("../../../_utils/metrics");
 const _utils_1 = require("../../_utils");
 const state_1 = require("../state");
 const path_1 = __importDefault(require("path"));
-const contentBuilderInitiate = require('../../../_utils/options/projectInitiate_contentBuilder');
-const dataExtensionInitiate = require('../../../_utils/options/projectInitiate_dataExtension');
-const { allowTracking, debug } = new state_1.State();
+const contentBuilderInitiate = require("../../../_utils/options/projectInitiate_contentBuilder");
+const dataExtensionInitiate = require("../../../_utils/options/projectInitiate_dataExtension");
+const { isVerbose, allowTracking, debug } = new state_1.State();
 /**
  * Notes June 2
  * Left off replacing matchedValue references with the new bldr IDs
@@ -36,7 +36,7 @@ class Initiate {
     constructor() {
         this.updateKeys = () => __awaiter(this, void 0, void 0, function* () {
             try {
-                const rootPath = (0, fileSystem_1.getRootPath)();
+                const rootPath = yield (0, fileSystem_1.getRootPath)();
                 const ctxFiles = yield (0, fileSystem_1.getAllFiles)();
                 for (const c in ctxFiles) {
                     const filePath = ctxFiles[c];
@@ -45,58 +45,65 @@ class Initiate {
                     fs_1.default.writeFileSync(filePath, content);
                 }
                 const manifestJSON = yield (0, bldrFileSystem_1.readManifest)();
-                const manifestStr = JSON.stringify(manifestJSON);
-                const updatedManifest = JSON.parse(yield (0, bldrFileSystem_1.scrubBldrSfmcEnv)(manifestStr));
-                fs_1.default.writeFileSync(path_1.default.join(`${rootPath}.local.manifest.json`), JSON.stringify(updatedManifest, null, 2));
-                if ((0, fileSystem_1.fileExists)(`${rootPath}package.manifest.json`)) {
+                let manifestStr = JSON.stringify(manifestJSON);
+                let updatedManifest = JSON.parse(yield (0, bldrFileSystem_1.scrubBldrSfmcEnv)(manifestStr));
+                fs_1.default.writeFileSync(path_1.default.join(`${rootPath}.copado.manifest.json`), JSON.stringify(updatedManifest, null, 2));
+                if (yield (0, fileSystem_1.fileExists)(`${rootPath}package.manifest.json`)) {
                     const pkgJSON = (0, bldrFileSystem_1.readPackageManifest)();
-                    const pkgStr = JSON.stringify(pkgJSON);
-                    const updatedPkg = JSON.parse(yield (0, bldrFileSystem_1.scrubBldrSfmcEnv)(pkgStr));
+                    let pkgStr = JSON.stringify(pkgJSON);
+                    let updatedPkg = JSON.parse(yield (0, bldrFileSystem_1.scrubBldrSfmcEnv)(pkgStr));
                     fs_1.default.writeFileSync(`${rootPath}package.manifest.json`, JSON.stringify(updatedPkg, null, 2));
                 }
             }
             catch (err) {
-                debug('Update Keys Err', 'error', err);
+                debug("Update Keys Err", "error", err);
             }
         });
         this.envOnly = () => {
             return (0, bldrFileSystem_1.createEnv)();
         };
         this.initiateContentBuilderProject = () => __awaiter(this, void 0, void 0, function* () {
-            const rootPath = (0, fileSystem_1.getRootPath)();
-            const dirExists = (0, fileSystem_1.fileExists)(`${rootPath}Content Builder`);
-            const dirEmpty = dirExists && (yield (0, _utils_1.isDirEmpty)(`${rootPath}Content Builder`));
+            const isWin = yield (0, _utils_1.isWindows)();
+            const slash = isWin ? "\\" : "/";
+            const rootPath = yield (0, fileSystem_1.getRootPath)();
+            const dirExists = yield (0, fileSystem_1.fileExists)(`${rootPath}content-builder`);
+            const dirEmpty = dirExists && (yield (0, _utils_1.isDirEmpty)(`${rootPath}content-builder`));
             if (!dirExists || dirEmpty) {
                 (0, yargs_interactive_1.default)()
-                    .usage('$bldr init [args]')
+                    .usage("$bldr init [args]")
                     .interactive(contentBuilderInitiate)
                     .then((initResults) => __awaiter(this, void 0, void 0, function* () {
                     const folderPaths = [
                         {
-                            folderPath: `Content Builder/${initResults.projectName}`,
+                            folderPath: `content-builder/${initResults.projectName}`,
                         },
                     ];
                     // Create empty directories
-                    (0, bldrFileSystem_1.createAllDirectories)(folderPaths);
+                    yield (0, bldrFileSystem_1.createAllDirectories)(folderPaths);
                     // Update ManifestJSON file with responses
-                    yield (0, manifestJSON_1.updateManifest)('contentBuilder', { folders: [], assets: [] });
+                    yield (0, manifestJSON_1.updateManifest)("contentBuilder", { folders: [], assets: [] });
                     if (initResults.createConfig) {
                         yield (0, bldrFileSystem_1.createEnv)();
                     }
                 }));
-                allowTracking() && (0, metrics_1.incrementMetric)('req_project_initiates_contentBuilder');
+                allowTracking() &&
+                    (0, metrics_1.incrementMetric)("req_project_initiates_contentBuilder");
             }
             else {
-                (0, display_1.displayLine)(`Root directory must be empty`, 'info');
+                (0, display_1.displayLine)(`Root directory must be empty`, "info");
             }
         });
         this.initiateDataExtension = () => __awaiter(this, void 0, void 0, function* () {
             (0, yargs_interactive_1.default)()
-                .usage('$bldr init [args]')
+                .usage("$bldr init [args]")
                 .interactive(dataExtensionInitiate)
                 .then((initResults) => __awaiter(this, void 0, void 0, function* () {
-                const context = initResults.sharedDataExtension ? 'sharedDataExtension' : 'dataExtension';
-                const rootFolder = initResults.sharedDataExtension ? 'Shared Data Extensions' : 'Data Extensions';
+                const context = initResults.sharedDataExtension
+                    ? "sharedDataExtension"
+                    : "dataExtension";
+                const rootFolder = initResults.sharedDataExtension
+                    ? "shared-data-extensions"
+                    : "data-extensions";
                 const initFolderPath = initResults.dataExtensionPath
                     ? `${rootFolder}/${initResults.dataExtensionPath}`
                     : rootFolder;
@@ -106,21 +113,21 @@ class Initiate {
                     },
                 ];
                 // Create empty directories
-                (0, bldrFileSystem_1.createAllDirectories)(folderPaths);
+                yield (0, bldrFileSystem_1.createAllDirectories)(folderPaths);
                 // Update ManifestJSON file with responses
                 yield (0, manifestJSON_1.updateManifest)(context, { folders: [], assets: [] });
                 const dataExtensionInit = {
                     name: initResults.dataExtensionName,
                     customerKey: initResults.dataExtensionName,
-                    description: '',
+                    description: "",
                     fields: [
                         {
-                            name: 'Your Field Name',
-                            defaultValue: '',
+                            name: "Your Field Name",
+                            defaultValue: "",
                             isRequired: false,
                             isPrimaryKey: false,
-                            fieldType: 'Text | Number | Date | Boolean | EmailAddress | Phone | Decimal | Locale',
-                            maxLength: '4000 | {{ Required for Primary Key Field }}',
+                            fieldType: "Text | Number | Date | Boolean | EmailAddress | Phone | Decimal | Locale",
+                            maxLength: "4000 | {{ Required for Primary Key Field }}",
                         },
                     ],
                     category: {
@@ -130,34 +137,37 @@ class Initiate {
                 if (initResults.sendableDataExtension) {
                     dataExtensionInit.isSendable = true;
                     dataExtensionInit.sendableDataExtensionField = {
-                        name: '{{ name of field to use in sendable relationship }}',
-                        fieldType: '{{ field type of field to use in sendable relationship }}',
+                        name: "{{ name of field to use in sendable relationship }}",
+                        fieldType: "{{ field type of field to use in sendable relationship }}",
                     };
                     dataExtensionInit.sendableSubscriberField = {
-                        name: 'Subscriber Key',
+                        name: "Subscriber Key",
                     };
                 }
-                if (initResults.retentionPeriod !== 'None') {
+                if (initResults.retentionPeriod !== "None") {
                     switch (initResults.retentionPeriod) {
-                        case 'Individual Records':
+                        case "Individual Records":
                             dataExtensionInit.dataRetentionPeriodLength = 6;
-                            dataExtensionInit.dataRetentionPeriod = 'Days | Weeks | Months | Years';
+                            dataExtensionInit.dataRetentionPeriod =
+                                "Days | Weeks | Months | Years";
                             dataExtensionInit.rowBasedRetention = true;
                             break;
-                        case 'All Records and Data Extension':
+                        case "All Records and Data Extension":
                             dataExtensionInit.dataRetentionPeriodLength = 6;
-                            dataExtensionInit.dataRetentionPeriod = 'Days | Weeks | Months | Years';
+                            dataExtensionInit.dataRetentionPeriod =
+                                "Days | Weeks | Months | Years";
                             dataExtensionInit.rowBasedRetention = false;
                             dataExtensionInit.resetRetentionPeriodOnImport = true;
                             break;
-                        case 'All Records':
+                        case "All Records":
                             dataExtensionInit.rowBasedRetention = false;
                             dataExtensionInit.deleteAtEndOfRetentionPeriod = true;
                             break;
                     }
                 }
                 yield (0, fileSystem_1.createFile)(`${initFolderPath}/${initResults.dataExtensionName}.json`, dataExtensionInit);
-                allowTracking() && (0, metrics_1.incrementMetric)('req_project_initiates_dataExtension');
+                allowTracking() &&
+                    (0, metrics_1.incrementMetric)("req_project_initiates_dataExtension");
             }));
         });
     }

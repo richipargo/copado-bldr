@@ -1,4 +1,4 @@
-import { Package } from '../../_bldr/_processes/package';
+import { Package } from "../../_bldr/_processes/package";
 const { packageConfig } = new Package();
 
 /**
@@ -6,5 +6,5 @@ const { packageConfig } = new Package();
  *
  */
 export async function PackageSwitch() {
-    return packageConfig();
+  return packageConfig();
 }

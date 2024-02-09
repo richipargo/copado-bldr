@@ -12,8 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.setContentBuilderPackageAssets = void 0;
 const GetContentBuilderAssetContent_1 = require("../../../../../_utils/bldrFileSystem/_context/contentBuilder/GetContentBuilderAssetContent");
 const setContentBuilderPackageAssets = (packageOut, contextAssets) => __awaiter(void 0, void 0, void 0, function* () {
-    packageOut['contentBuilder'] = {};
-    return (packageOut['contentBuilder']['assets'] = contextAssets.map((asset) => {
+    packageOut["contentBuilder"] = {};
+    return (packageOut["contentBuilder"]["assets"] = contextAssets.map((asset) => {
         return {
             bldrId: asset.bldrId,
             name: asset.name,

@@ -31,8 +31,8 @@ const fs_1 = __importDefault(require("fs"));
 const metrics_1 = require("../../../_utils/metrics");
 const add = new add_1.Add();
 const push = new push_1.Push();
-const sfmcContext = require('@basetime/bldr-sfmc-sdk/dist/sfmc/utils/sfmcContextMapping');
-const find = require('lodash.find');
+const sfmcContext = require("@basetime/bldr-sfmc-sdk/dist/sfmc/utils/sfmcContextMapping");
+const find = require("lodash.find");
 /**
  * Notes June 2
  * Left off replacing matchedValue references with the new bldr IDs
@@ -48,18 +48,18 @@ class Deploy {
          */
         this.deployPackage = (argv) => __awaiter(this, void 0, void 0, function* () {
             try {
-                allowTracking() && (0, metrics_1.incrementMetric)('req_command_deploy');
+                allowTracking() && (0, metrics_1.incrementMetric)("req_command_deploy");
                 const packageJSON = yield (0, bldrFileSystem_1.readPackageManifest)();
                 const availableContexts = sfmcContext.sfmc_context_mapping.map((ctx) => ctx.context);
                 const packageContexts = Object.keys(packageJSON).map((key) => {
-                    return availableContexts.includes(key) && typeof key === 'string' && key;
+                    return (availableContexts.includes(key) && typeof key === "string" && key);
                 });
                 let sfmcOnly = false;
-                if (argv['sfmc-only']) {
+                if (argv["sfmc-only"]) {
                     sfmcOnly = true;
                 }
                 let localOnly = false;
-                if (argv['local-only']) {
+                if (argv["local-only"]) {
                     localOnly = true;
                 }
                 if (yield this.deployCheckConfig()) {
@@ -70,7 +70,7 @@ class Deploy {
                     const context = packageContexts[c];
                     if (context && packageJSON[context]) {
                         yield (0, manifestJSON_1.updateManifest)(context, { assets: [], folders: [] });
-                        const pkgAssets = packageJSON[context]['assets'];
+                        const pkgAssets = packageJSON[context]["assets"];
                         let pkgFolderPaths = pkgAssets
                             .map((asset) => asset.assetType &&
                             asset.assetType.name &&
@@ -78,9 +78,11 @@ class Deploy {
                             asset.category.folderPath)
                             .filter(Boolean);
                         pkgFolderPaths = [...new Set(pkgFolderPaths)];
-                        !sfmcOnly && (0, display_1.displayLine)(`Creating ${context} Local Files`, 'progress');
-                        !sfmcOnly && (yield (0, CreateFilesBasedOnContext_1.createEditableFilesBasedOnContext)(context, pkgAssets));
-                        (0, display_1.displayLine)(`Creating ${context} folders in sfmc`, 'progress');
+                        !sfmcOnly &&
+                            (0, display_1.displayLine)(`Creating ${context} Local Files`, "progress");
+                        !sfmcOnly &&
+                            (yield (0, CreateFilesBasedOnContext_1.createEditableFilesBasedOnContext)(context, pkgAssets));
+                        (0, display_1.displayLine)(`Creating ${context} folders in sfmc`, "progress");
                         for (const fp in pkgFolderPaths) {
                             const ctxDetails = sfmcContext.sfmc_context_mapping.find((ctx) => ctx.context === context);
                             const folder = ctxDetails && {
@@ -91,15 +93,21 @@ class Deploy {
                         }
                     }
                 }
-                const package_dataExtension = packageContexts.includes('dataExtension') && packageJSON['dataExtension']['assets'];
-                const package_contentBuilder = packageContexts.includes('contentBuilder') && packageJSON['contentBuilder']['assets'];
-                const package_automationStudio = packageContexts.includes('automationStudio') && packageJSON['automationStudio']['assets'];
-                !localOnly && sdk && package_dataExtension && (yield this.deployDataExtension(sdk, package_dataExtension));
+                const package_dataExtension = packageContexts.includes("dataExtension") &&
+                    packageJSON["dataExtension"]["assets"];
+                const package_contentBuilder = packageContexts.includes("contentBuilder") &&
+                    packageJSON["contentBuilder"]["assets"];
+                const package_automationStudio = packageContexts.includes("automationStudio") &&
+                    packageJSON["automationStudio"]["assets"];
+                !localOnly &&
+                    sdk &&
+                    package_dataExtension &&
+                    (yield this.deployDataExtension(sdk, package_dataExtension));
                 !localOnly &&
                     sdk &&
                     package_contentBuilder &&
                     (yield this.deployContentBuilderAssets(sdk, package_contentBuilder));
-                sfmcOnly && fs_1.default.unlinkSync('./.local.manifest.json');
+                sfmcOnly && fs_1.default.unlinkSync("./.copado.manifest.json");
             }
             catch (err) {
                 console.log(err);
@@ -108,13 +116,13 @@ class Deploy {
         this.deployCheckConfig = () => __awaiter(this, void 0, void 0, function* () {
             let preventDeployment = false;
             const dirPath = yield (0, fileSystem_1.getRootPath)();
-            if ((0, fileSystem_1.fileExists)(`${dirPath}/.sfmc.env.json`)) {
+            if ((0, fileSystem_1.fileExists)(`${dirPath}/copado/copado.json`)) {
                 const config = yield (0, bldrFileSystem_1.readBldrSfmcEnv)();
                 for (const c in config) {
                     const key = c;
                     const value = config[c];
-                    if (value === '') {
-                        console.log(`Please configure ${key} in .sfmc.env.json`);
+                    if (value === "") {
+                        console.log(`Please configure ${key} in /copado/copado.json`);
                         preventDeployment = true;
                     }
                 }
@@ -131,7 +139,8 @@ class Deploy {
                 //Find 0 Dependency assets
                 const noDependencyAssets = contentBuilderAssets
                     .map((asset) => {
-                    if ((asset.dependencies && asset.dependencies.length === 0) || !asset.dependencies) {
+                    if ((asset.dependencies && asset.dependencies.length === 0) ||
+                        !asset.dependencies) {
                         return asset;
                     }
                 })
@@ -153,7 +162,7 @@ class Deploy {
                 }
             }
             catch (err) {
-                console.log('ERR', err);
+                console.log("ERR", err);
             }
         });
         /**
@@ -163,7 +172,7 @@ class Deploy {
          */
         this.deployContentBuilderAssetNoDependencies = (sdk, contentBuilderAsset) => __awaiter(this, void 0, void 0, function* () {
             const manifestJSON = yield (0, bldrFileSystem_2.readManifest)();
-            const manifestJSONFolders = manifestJSON['contentBuilder']['folders'];
+            const manifestJSONFolders = manifestJSON["contentBuilder"]["folders"];
             const contentFolderPath = contentBuilderAsset.category.folderPath;
             const category = manifestJSONFolders.find((folder) => folder.folderPath === contentFolderPath);
             //Update asset content with configurations before posting
@@ -184,18 +193,18 @@ class Deploy {
                 (0, display_1.displayLine)(`${contentBuilderAsset.assetType.name} asset type requires the user to create the asset manually. Create the asset, then run the [ bldr clone ] command to get the asset.`);
             if (packageDeployIgnore_1.packageDeployIgnore.includes(contentBuilderAsset.assetType.name)) {
             }
-            else if (createAsset.status === 'ERROR') {
+            else if (createAsset.status === "ERROR") {
                 console.log(createAsset);
             }
             else {
-                (0, display_1.displayLine)(`created [sfmc]: ${contentBuilderAsset.name}`, 'success');
+                (0, display_1.displayLine)(`created [sfmc]: ${contentBuilderAsset.name}`, "success");
                 contentBuilderAsset.id = createAsset.id;
                 contentBuilderAsset.assetType = createAsset.assetType;
                 contentBuilderAsset.category = createAsset.category;
                 contentBuilderAsset.customerKey = createAsset.customerKey;
                 contentBuilderAsset.category.folderPath = contentFolderPath;
                 // Update ManifestJSON file with responses
-                yield (0, manifestJSON_1.updateManifest)('contentBuilder', { assets: [contentBuilderAsset] });
+                yield (0, manifestJSON_1.updateManifest)("contentBuilder", { assets: [contentBuilderAsset] });
             }
         });
         /**
@@ -212,22 +221,22 @@ class Deploy {
                 (yield sdk.sfmc.asset.postAsset(updatedAsset))) ||
                 (0, display_1.displayLine)(`${contentBuilderAsset.assetType.name} asset type requires the user to create the asset manually. Create the asset, then run the [ bldr clone ] command to get the asset.`);
             if (packageDeployIgnore_1.packageDeployIgnore.includes(contentBuilderAsset.assetType.name)) {
-                yield (0, manifestJSON_1.updateManifest)('contentBuilder', { assets: [updatedAsset] });
-                yield (0, CreateFilesBasedOnContext_1.createEditableFilesBasedOnContext)('contentBuilder', [updatedAsset]);
+                yield (0, manifestJSON_1.updateManifest)("contentBuilder", { assets: [updatedAsset] });
+                yield (0, CreateFilesBasedOnContext_1.createEditableFilesBasedOnContext)("contentBuilder", [updatedAsset]);
             }
-            else if (createAsset.status === 'ERROR') {
+            else if (createAsset.status === "ERROR") {
                 console.log(createAsset.statusText);
             }
             else {
-                (0, display_1.displayLine)(`created [sfmc]: ${contentBuilderAsset.name}`, 'success');
+                (0, display_1.displayLine)(`created [sfmc]: ${contentBuilderAsset.name}`, "success");
                 updatedAsset.id = createAsset.id;
                 updatedAsset.assetType = createAsset.assetType;
                 updatedAsset.category = createAsset.category;
                 updatedAsset.customerKey = createAsset.customerKey;
                 updatedAsset.category.folderPath = contentFolderPath;
                 // Update ManifestJSON file with responses
-                yield (0, manifestJSON_1.updateManifest)('contentBuilder', { assets: [updatedAsset] });
-                yield (0, CreateFilesBasedOnContext_1.createEditableFilesBasedOnContext)('contentBuilder', [updatedAsset]);
+                yield (0, manifestJSON_1.updateManifest)("contentBuilder", { assets: [updatedAsset] });
+                yield (0, CreateFilesBasedOnContext_1.createEditableFilesBasedOnContext)("contentBuilder", [updatedAsset]);
             }
         });
         /**
@@ -241,7 +250,7 @@ class Deploy {
             let content = contentBuilderAsset.content;
             content = yield (0, bldrFileSystem_1.replaceBldrSfmcEnv)(content);
             const manifestJSON = yield (0, bldrFileSystem_2.readManifest)();
-            const manifestJSONFolders = manifestJSON['contentBuilder']['folders'];
+            const manifestJSONFolders = manifestJSON["contentBuilder"]["folders"];
             const contentFolderPath = contentBuilderAsset.category.folderPath;
             const category = manifestJSONFolders.find((folder) => folder.folderPath === contentFolderPath);
             contentBuilderAsset.category = category;
@@ -251,39 +260,41 @@ class Deploy {
             for (const a in assetDependencies) {
                 const assetDependency = assetDependencies[a];
                 const assetContext = assetDependency.context;
-                const manifestContextAssets = manifestJSON[assetContext]['assets'];
+                const manifestContextAssets = manifestJSON[assetContext]["assets"];
                 const findObj = yield find(manifestContextAssets, (o) => {
                     return o.bldrId === assetDependency.bldrId;
                 });
                 if (findObj) {
                     switch (assetDependency.reference) {
-                        case 'Lookup':
-                        case 'LookupRows':
-                        case 'ClaimRow':
-                        case 'DataExtensionRowCount':
-                        case 'DeleteData':
-                        case 'DeleteDE':
-                        case 'InsertDE':
-                        case 'UpdateData':
-                        case 'UpdateDE':
-                        case 'UpsertData':
-                        case 'UpsertDE':
-                        case 'LookupOrderedRows':
-                        case 'LookupOrderedRowsCS':
-                        case 'LookupRowsCS':
+                        case "Lookup":
+                        case "LookupRows":
+                        case "ClaimRow":
+                        case "DataExtensionRowCount":
+                        case "DeleteData":
+                        case "DeleteDE":
+                        case "InsertDE":
+                        case "UpdateData":
+                        case "UpdateDE":
+                        case "UpsertData":
+                        case "UpsertDE":
+                        case "LookupOrderedRows":
+                        case "LookupOrderedRowsCS":
+                        case "LookupRowsCS":
                             createdId = findObj.name;
                             break;
-                        case 'ContentBlockById':
-                        case 'ContentBlockByID':
+                        case "ContentBlockById":
+                        case "ContentBlockByID":
                             createdId = findObj.id;
                             break;
-                        case 'ContentBlockByName':
-                            if (content.match(new RegExp(`(?<=Platform.Function.ContentBlockByName\\(')${assetDependency.bldrId}`, 'g')) ||
-                                content.match(new RegExp(`(?<=Platform.Function.ContentBlockByName\\(")${assetDependency.bldrId}`, 'g'))) {
-                                createdId = `${findObj.category.folderPath}/${findObj.name}`.replaceAll('/', '\\\\');
+                        case "ContentBlockByName":
+                            if (content.match(new RegExp(`(?<=Platform.Function.ContentBlockByName\\(')${assetDependency.bldrId}`, "g")) ||
+                                content.match(new RegExp(`(?<=Platform.Function.ContentBlockByName\\(")${assetDependency.bldrId}`, "g"))) {
+                                createdId =
+                                    `${findObj.category.folderPath}/${findObj.name}`.replaceAll("/", "\\\\");
                             }
                             else {
-                                createdId = `${findObj.category.folderPath}/${findObj.name}`.replaceAll('/', '\\');
+                                createdId =
+                                    `${findObj.category.folderPath}/${findObj.name}`.replaceAll("/", "\\");
                             }
                             break;
                     }
@@ -305,7 +316,7 @@ class Deploy {
                     let dataExtension = dataExtensions[d];
                     const dataExtensionFields = dataExtension.fields;
                     const manifestJSON = yield (0, bldrFileSystem_2.readManifest)();
-                    const manifestJSONFolder = manifestJSON['dataExtension']['folders'].find((folder) => folder.folderPath === dataExtension.category.folderPath && folder);
+                    const manifestJSONFolder = manifestJSON["dataExtension"]["folders"].find((folder) => folder.folderPath === dataExtension.category.folderPath && folder);
                     if (manifestJSONFolder) {
                         dataExtension.categoryId = manifestJSONFolder.id;
                     }
@@ -313,12 +324,12 @@ class Deploy {
                         delete dataExtension.category;
                     }
                     const createDataExtension = yield sdk.sfmc.emailStudio.postAsset(dataExtension);
-                    if (createDataExtension.OverallStatus === 'OK') {
+                    if (createDataExtension.OverallStatus === "OK") {
                         dataExtension.fields = dataExtensionFields;
-                        yield (0, manifestJSON_1.updateManifest)('dataExtension', {
+                        yield (0, manifestJSON_1.updateManifest)("dataExtension", {
                             assets: [dataExtension],
                         });
-                        (0, display_1.displayLine)(`Created [sfmc]: ${dataExtension.name}`, 'success');
+                        (0, display_1.displayLine)(`Created [sfmc]: ${dataExtension.name}`, "success");
                         output.push(dataExtension);
                     }
                     else {
@@ -329,11 +340,15 @@ class Deploy {
                 return output;
             }
             catch (err) {
-                const statusMessage = err && err.JSON && err.JSON.Results && err.JSON.Results.length && err.JSON.Results[0].StatusMessage;
-                (0, display_1.displayLine)(statusMessage, 'error');
+                const statusMessage = err &&
+                    err.JSON &&
+                    err.JSON.Results &&
+                    err.JSON.Results.length &&
+                    err.JSON.Results[0].StatusMessage;
+                (0, display_1.displayLine)(statusMessage, "error");
                 statusMessage &&
-                    statusMessage.includes('Updating an existing Data Extension definition') &&
-                    (0, display_1.displayLine)('Please ensure all Data Extension names/customer keys are unique', 'error');
+                    statusMessage.includes("Updating an existing Data Extension definition") &&
+                    (0, display_1.displayLine)("Please ensure all Data Extension names/customer keys are unique", "error");
             }
         });
     }

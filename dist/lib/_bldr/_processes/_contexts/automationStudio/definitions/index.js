@@ -16,10 +16,10 @@ const setAutomationStudioDefinition = (sfmcUpdateObject, updatedContent) => __aw
     const assetType = sfmcUpdateObject.assetType.name;
     let assetOutput;
     switch (assetType) {
-        case 'ssjsactivity':
+        case "ssjsactivity":
             assetOutput = yield (0, ScriptActivity_1.setScriptActivity)(sfmcUpdateObject, updatedContent);
             break;
-        case 'queryactivity':
+        case "queryactivity":
             assetOutput = yield (0, QueryActivity_1.setQueryActivity)(sfmcUpdateObject, updatedContent);
             break;
         default:
@@ -34,10 +34,10 @@ exports.setAutomationStudioDefinition = setAutomationStudioDefinition;
 const updateAutomationStudioAssetContent = (asset, content) => {
     const assetType = (asset.assetType && asset.assetType.name) || null;
     switch (assetType) {
-        case 'queryactivity':
+        case "queryactivity":
             asset.queryText = content;
             break;
-        case 'ssjsactivity':
+        case "ssjsactivity":
             asset.script = content;
             break;
         default:

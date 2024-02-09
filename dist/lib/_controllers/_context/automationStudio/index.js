@@ -28,6 +28,7 @@ const { allowTracking } = new state_1.State();
  *
  * @param {string} req
  * @param {object} argv
+ * @param {object} store
  *
  */
 const AutomationStudioSwitch = (req, argv) => __awaiter(void 0, void 0, void 0, function* () {
@@ -35,103 +36,107 @@ const AutomationStudioSwitch = (req, argv) => __awaiter(void 0, void 0, void 0, 
         const bldr = yield (0, _bldr_sdk_1.initiateBldrSDK)();
         const { automationStudio } = bldr.cli;
         if (!bldr) {
-            throw new Error('unable to load sdk');
+            throw new Error("unable to load sdk");
         }
         switch (req) {
-            case 'search':
+            case "search":
                 /**
                  * Search for Content Builder Folders
                  */
-                if (typeof argv.f === 'string' && argv.f.includes(':')) {
-                    const activity = argv.f.split(':')[1];
+                if (typeof argv.f === "string" && argv.f.includes(":")) {
+                    const activity = argv.f.split(":")[1];
                     const searchTerm = argv._ && argv._[1];
-                    let contentType = '';
+                    let contentType = "";
                     switch (activity) {
-                        case 'ssjs':
-                            contentType = 'ssjsactivity';
+                        case "ssjs":
+                            contentType = "ssjsactivity";
                             break;
-                        case 'sql':
-                            contentType = 'queryactivity';
+                        case "sql":
+                            contentType = "queryactivity";
                             break;
-                        case 'esd':
-                            contentType = 'userinitiatedsends';
+                        case "esd":
+                            contentType = "userinitiatedsends";
                             break;
                     }
                     const searchRequest = yield automationStudio.searchFolders({
                         contentType,
-                        searchKey: 'Name',
+                        searchKey: "Name",
                         searchTerm: searchTerm,
                     });
-                    (0, display_1.displayLine)(`${argv.f} Search Results | ${searchRequest.length} Results`, 'info');
+                    (0, display_1.displayLine)(`${argv.f} Search Results | ${searchRequest.length} Results`, "info");
                     searchRequest &&
                         searchRequest.length &&
                         searchRequest.forEach((obj) => {
                             (0, display_1.displayObject)((0, flat_1.default)(obj));
                         });
-                    allowTracking() && (0, metrics_1.incrementMetric)(`req_searches_automationStudio_${contentType}_folders`);
+                    allowTracking() &&
+                        (0, metrics_1.incrementMetric)(`req_searches_automationStudio_${contentType}_folders`);
                 }
-                else if (typeof argv.f === 'string' && !argv.f.includes(':')) {
+                else if (typeof argv.f === "string" && !argv.f.includes(":")) {
                     const searchRequest = yield automationStudio.searchFolders({
-                        contentType: 'automations',
-                        searchKey: 'Name',
+                        contentType: "automations",
+                        searchKey: "Name",
                         searchTerm: argv.f,
                     });
-                    (0, display_1.displayLine)(`${argv.f} Search Results | ${searchRequest.length} Results`, 'info');
+                    (0, display_1.displayLine)(`${argv.f} Search Results | ${searchRequest.length} Results`, "info");
                     searchRequest &&
                         searchRequest.length &&
                         searchRequest.forEach((obj) => {
                             (0, display_1.displayObject)((0, flat_1.default)(obj));
                         });
-                    allowTracking() && (0, metrics_1.incrementMetric)(`req_searches_automationStudio_automations_folders`);
+                    allowTracking() &&
+                        (0, metrics_1.incrementMetric)(`req_searches_automationStudio_automations_folders`);
                 }
                 /**
                  * Search for AutomationStudio Assets
                  */
-                if (typeof argv.a === 'string' && argv.a.includes(':')) {
-                    const activity = argv.a.split(':')[1];
+                if (typeof argv.a === "string" && argv.a.includes(":")) {
+                    const activity = argv.a.split(":")[1];
                     const searchTerm = argv._ && argv._[1];
                     const searchRequest = yield automationStudio.searchActivity(activity, searchTerm);
                     searchRequest &&
                         searchRequest.length &&
                         searchRequest.forEach((item) => (0, display_1.displayObject)(item));
                 }
-                else if (typeof argv.a === 'string' && !argv.a.includes(':')) {
+                else if (typeof argv.a === "string" && !argv.a.includes(":")) {
                     const searchRequest = yield automationStudio.searchAssets({
-                        searchKey: 'Name',
+                        searchKey: "Name",
                         searchTerm: argv.a,
                     });
-                    (0, display_1.displayLine)(`${argv.a} Search Results | ${searchRequest.length} Results`, 'info');
+                    (0, display_1.displayLine)(`${argv.a} Search Results | ${searchRequest.length} Results`, "info");
                     searchRequest.forEach((obj) => {
                         (0, display_1.displayObject)((0, flat_1.default)(obj));
                     });
                 }
                 break;
-            case 'clone':
-                (0, display_1.displayLine)(`Starting Clone`, 'info');
+            case "clone":
+                (0, display_1.displayLine)(`Starting Clone`, "info");
                 /**
-                 * Search for Automation Studio Folders
+                 * Search for automation-studio Folders
                  */
-                if (typeof argv.f === 'string' && argv.f.includes(':')) {
-                    const activity = argv.f.split(':')[1];
+                if (typeof argv.f === "string" && argv.f.includes(":")) {
+                    const activity = argv.f.split(":")[1];
                     const categoryId = argv._ && argv._[1];
-                    let contentType = '';
+                    let contentType = "";
                     switch (activity) {
-                        case 'ssjs':
-                            contentType = 'ssjsactivity';
+                        case "ssjs":
+                            contentType = "ssjsactivity";
                             break;
-                        case 'sql':
-                            contentType = 'queryactivity';
+                        case "sql":
+                            contentType = "queryactivity";
                             break;
-                        case 'esd':
-                            contentType = 'userinitiatedsends';
+                        case "esd":
+                            contentType = "userinitiatedsends";
                             break;
                     }
                     const searchRequest = yield automationStudio.gatherAutomationDefinitionsByCategoryId({
                         contentType,
                         categoryId,
                     });
-                    if (!searchRequest || !searchRequest.assets || !searchRequest.folders) {
-                        (0, display_1.displayLine)(`Unable to Clone Request`, 'error');
+                    if (!searchRequest ||
+                        !searchRequest.assets ||
+                        !searchRequest.folders) {
+                        (0, display_1.displayLine)(`Unable to Clone Request`, "error");
                         return;
                     }
                     const { assets, folders } = searchRequest;
@@ -144,7 +149,7 @@ const AutomationStudioSwitch = (req, argv) => __awaiter(void 0, void 0, void 0, 
                                 id: category.ID,
                                 name: category.Name,
                                 parentId: category.ParentFolder.ID,
-                                folderPath: `Automation Studio/${category.FolderPath}`,
+                                folderPath: `automation-studio/${category.FolderPath}`,
                             };
                             return asset;
                         });
@@ -155,51 +160,54 @@ const AutomationStudioSwitch = (req, argv) => __awaiter(void 0, void 0, void 0, 
                                 id: category.ID,
                                 name: category.Name,
                                 parentId: category.ParentFolder.ID,
-                                folderPath: `Automation Studio/${category.FolderPath}`,
+                                folderPath: `automation-studio/${category.FolderPath}`,
                             };
                         });
                     yield (0, CreateLocalFiles_1.createAutomationStudioEditableFiles)(formattedAssetResponse);
-                    yield (0, manifestJSON_1.updateManifest)('automationStudio', {
+                    yield (0, manifestJSON_1.updateManifest)("automationStudio", {
                         assets: formattedAssetResponse,
                         folders: formattedAssetCategories,
                     });
-                    allowTracking() && (0, metrics_1.incrementMetric)(`req_clones_automationStudio_${contentType}_folders`);
+                    allowTracking() &&
+                        (0, metrics_1.incrementMetric)(`req_clones_automationStudio_${contentType}_folders`);
                 }
-                else if (typeof argv.f === 'number') {
+                else if (typeof argv.f === "number") {
                     const cloneAutomationRequest = yield automationStudio.gatherAssetsByCategoryId({
-                        contentType: 'automations',
+                        contentType: "automations",
                         categoryId: argv.f,
                     });
                     if (cloneAutomationRequest.assets.length === 0) {
-                        (0, display_1.displayLine)('No items to clone', 'info');
+                        (0, display_1.displayLine)("No items to clone", "info");
                         return;
                     }
                     yield processAutomationCloneRequest(cloneAutomationRequest);
                 }
                 /**
-                 * Search for Automation Studio Assets
+                 * Search for automation-studio Assets
                  */
-                if (typeof argv.a === 'string' && argv.a.includes(':')) {
-                    const activity = argv.a.split(':')[1];
+                if (typeof argv.a === "string" && argv.a.includes(":")) {
+                    const activity = argv.a.split(":")[1];
                     const assetId = argv._ && argv._[1];
-                    let contentType = '';
+                    let contentType = "";
                     switch (activity) {
-                        case 'ssjs':
-                            contentType = 'ssjsactivity';
+                        case "ssjs":
+                            contentType = "ssjsactivity";
                             break;
-                        case 'sql':
-                            contentType = 'queryactivity';
+                        case "sql":
+                            contentType = "queryactivity";
                             break;
-                        case 'esd':
-                            contentType = 'userinitiatedsends';
+                        case "esd":
+                            contentType = "userinitiatedsends";
                             break;
                     }
                     const searchRequest = yield automationStudio.gatherAutomationDefinitionsById({
                         contentType,
                         assetId,
                     });
-                    if (!searchRequest || !searchRequest.assets || !searchRequest.folders) {
-                        (0, display_1.displayLine)(`Unable to Clone Request`, 'error');
+                    if (!searchRequest ||
+                        !searchRequest.assets ||
+                        !searchRequest.folders) {
+                        (0, display_1.displayLine)(`Unable to Clone Request`, "error");
                         return;
                     }
                     const { assets, folders } = searchRequest;
@@ -212,7 +220,7 @@ const AutomationStudioSwitch = (req, argv) => __awaiter(void 0, void 0, void 0, 
                                 id: category.ID,
                                 name: category.Name,
                                 parentId: category.ParentFolder.ID,
-                                folderPath: `Automation Studio/${category.FolderPath}`,
+                                folderPath: `automation-studio/${category.FolderPath}`,
                             };
                             return asset;
                         });
@@ -227,15 +235,15 @@ const AutomationStudioSwitch = (req, argv) => __awaiter(void 0, void 0, void 0, 
                             };
                         });
                     yield (0, CreateLocalFiles_1.createAutomationStudioEditableFiles)(formattedAssetResponse);
-                    yield (0, manifestJSON_1.updateManifest)('automationStudio', {
+                    yield (0, manifestJSON_1.updateManifest)("automationStudio", {
                         assets: formattedAssetResponse,
                         folders: formattedAssetCategories,
                     });
                 }
-                else if (typeof argv.a === 'string' && !argv.a.includes(':')) {
+                else if (typeof argv.a === "string" && !argv.a.includes(":")) {
                     const cloneAutomationRequest = yield automationStudio.gatherAssetById(argv.a);
                     if (cloneAutomationRequest.assets.length === 0) {
-                        (0, display_1.displayLine)('No items to clone', 'info');
+                        (0, display_1.displayLine)("No items to clone", "info");
                         return;
                     }
                     yield processAutomationCloneRequest(cloneAutomationRequest);
@@ -260,10 +268,10 @@ const processAutomationCloneRequest = (cloneAutomationRequest) => __awaiter(void
         cloneAutomationRequest.formattedAutomationDefinitions &&
         cloneAutomationRequest.formattedAutomationDefinitions.length &&
         (yield (0, CreateLocalFiles_1.createAutomationStudioEditableFiles)(cloneAutomationRequest.formattedAutomationDefinitions));
-    yield (0, manifestJSON_1.updateManifest)('automationStudio', {
+    yield (0, manifestJSON_1.updateManifest)("automationStudio", {
         assets: cloneAutomationRequest.assets,
     });
-    yield (0, manifestJSON_1.updateManifest)('automationStudio', {
+    yield (0, manifestJSON_1.updateManifest)("automationStudio", {
         assets: cloneAutomationRequest.formattedAutomationDefinitions,
     });
     (0, display_1.displayLine)(`>> Cloned ${cloneAutomationRequest.assets.length} Automations`);
@@ -271,7 +279,7 @@ const processAutomationCloneRequest = (cloneAutomationRequest) => __awaiter(void
     // Create Automation Dependencies
     Object.keys(cloneAutomationRequest.formattedAutomationDependencies) &&
         Object.keys(cloneAutomationRequest.formattedAutomationDependencies).forEach((context) => __awaiter(void 0, void 0, void 0, function* () {
-            (0, display_1.displayLine)(`Cloning Dependencies: ${context}`, 'info');
+            (0, display_1.displayLine)(`Cloning Dependencies: ${context}`, "info");
             const contextDependencies = cloneAutomationRequest.formattedAutomationDependencies[context];
             contextDependencies &&
                 contextDependencies.assets &&

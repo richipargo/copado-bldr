@@ -25,21 +25,21 @@ const ContextSwitch = (req, argv) => __awaiter(void 0, void 0, void 0, function*
     /**
      * Configure New Instance
      */
-    if (!argv['content-builder'] &&
+    if (!argv["content-builder"] &&
         !argv.cb &&
-        !argv['automation-studio'] &&
+        !argv["automation-studio"] &&
         !argv.as &&
         !argv.de &&
-        !argv['data-extension']) {
-        throw new Error('Please include a context flag');
+        !argv["data-extension"]) {
+        throw new Error("Please include a context flag");
     }
-    if (argv.cb || argv['content-builder']) {
+    if (argv.cb || argv["content-builder"]) {
         (0, contentBuilder_1.ContentBuilderSwitch)(req, argv);
     }
-    if (argv.as || argv['automation-studio']) {
+    if (argv.as || argv["automation-studio"]) {
         (0, automationStudio_1.AutomationStudioSwitch)(req, argv);
     }
-    if (argv.de || argv['data-extension']) {
+    if (argv.de || argv["data-extension"]) {
         (0, dataExtension_1.DataExtensionSwitch)(req, argv);
     }
     // /**

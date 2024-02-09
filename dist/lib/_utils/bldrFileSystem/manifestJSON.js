@@ -30,14 +30,14 @@ var ObjectIdKeys;
 })(ObjectIdKeys || (ObjectIdKeys = {}));
 //TODO try to make context enum type, was getting caught up on instanceDetails
 const updateManifest = (context, content) => __awaiter(void 0, void 0, void 0, function* () {
-    if (typeof content !== 'object') {
-        throw new Error('Content needs to be an object');
+    if (typeof content !== "object") {
+        throw new Error("Content needs to be an object");
     }
     if (!context) {
-        throw new Error('Context is required');
+        throw new Error("Context is required");
     }
-    const rootPath = (yield (0, fileSystem_2.getRootPath)()) || path_1.default.normalize('./');
-    const manifestPath = path_1.default.normalize(`${rootPath}.local.manifest.json`);
+    const rootPath = (yield (0, fileSystem_2.getRootPath)()) || path_1.default.normalize("./");
+    const manifestPath = path_1.default.normalize(`${rootPath}.copado.manifest.json`);
     if (!(0, fileSystem_2.fileExists)(manifestPath)) {
         const init = {};
         const state = (0, _utils_1.assignObject)(store_1.state_conf.get());
@@ -58,7 +58,8 @@ const updateManifest = (context, content) => __awaiter(void 0, void 0, void 0, f
     let manifestFile = yield (0, promises_1.readFile)(manifestPath);
     let manifestJSON = JSON.parse(manifestFile);
     // Siloed write for instance details
-    if (context === 'instanceDetails' && !Object.prototype.hasOwnProperty.call(manifestJSON, context)) {
+    if (context === "instanceDetails" &&
+        !Object.prototype.hasOwnProperty.call(manifestJSON, context)) {
         manifestJSON[context] = content;
         fs_1.default.writeFileSync(manifestPath, JSON.stringify(manifestJSON, null, 2));
         return;
@@ -76,15 +77,17 @@ const updateManifest = (context, content) => __awaiter(void 0, void 0, void 0, f
                 let itemId;
                 let manifestContextItems = manifestContextObject[assetType];
                 let manifestObj;
-                if (assetType === 'assets') {
+                if (assetType === "assets") {
                     // Content Builder assets should have have item.id
-                    // Automation Studio assets get an assetType object with the key for their ID
-                    if (['contentBuilder', 'sharedContent'].includes(context)) {
+                    // automation-studio assets get an assetType object with the key for their ID
+                    if (["contentBuilder", "sharedContent"].includes(context)) {
                         itemId = updateItem.id;
                         manifestObj = manifestContextItems.find(({ id }) => id === itemId);
                     }
-                    else if (context === 'automationStudio') {
-                        const objectIdKey = updateItem && updateItem.assetType && updateItem.assetType.objectIdKey;
+                    else if (context === "automationStudio") {
+                        const objectIdKey = updateItem &&
+                            updateItem.assetType &&
+                            updateItem.assetType.objectIdKey;
                         itemId =
                             objectIdKey &&
                                 Object.prototype.hasOwnProperty.call(updateItem, objectIdKey) &&
@@ -92,45 +95,47 @@ const updateManifest = (context, content) => __awaiter(void 0, void 0, void 0, f
                         //@ts-ignore
                         manifestObj = manifestContextItems.find((item) => item[objectIdKey] === itemId);
                     }
-                    else if (['dataExtension', 'sharedDataExtension'].includes(context)) {
+                    else if (["dataExtension", "sharedDataExtension"].includes(context)) {
                         itemId = updateItem.customerKey;
                         manifestObj = manifestContextItems.find(({ customerKey }) => customerKey === itemId);
                     }
                 }
-                else if (assetType === 'folders') {
+                else if (assetType === "folders") {
                     itemId = updateItem.id;
                     manifestObj = manifestContextItems.find(({ id }) => id === itemId);
                 }
                 // If the item is not found based on the ID add it to the Context Items Array
                 // If the item is found check that the items are equal
-                if (typeof manifestObj === 'undefined') {
+                if (typeof manifestObj === "undefined") {
                     manifestContextItems = [...manifestContextItems, updateItem];
                 }
                 else {
                     if (!(0, lodash_isequal_1.default)(updateItem, manifestObj)) {
                         let updateIndex;
-                        if (assetType === 'assets') {
-                            if (['contentBuilder', 'sharedContent'].includes(context)) {
+                        if (assetType === "assets") {
+                            if (["contentBuilder", "sharedContent"].includes(context)) {
                                 updateIndex = manifestContextItems.findIndex(({ id }) => id === updateItem.id);
                             }
-                            else if (context === 'automationStudio') {
-                                const objectIdKey = updateItem && updateItem.assetType && updateItem.assetType.objectIdKey;
+                            else if (context === "automationStudio") {
+                                const objectIdKey = updateItem &&
+                                    updateItem.assetType &&
+                                    updateItem.assetType.objectIdKey;
                                 let itemId = objectIdKey &&
                                     Object.prototype.hasOwnProperty.call(updateItem, objectIdKey) &&
                                     updateItem[objectIdKey];
                                 updateIndex = manifestContextItems.findIndex((item) => itemId && item[itemId] === updateItem[itemId]);
                                 updateItem.category = manifestObj.category;
                             }
-                            else if (['dataExtension', 'sharedDataExtension'].includes(context)) {
+                            else if (["dataExtension", "sharedDataExtension"].includes(context)) {
                                 itemId = updateItem.customerKey || updateItem.id;
                                 updateIndex = manifestContextItems.findIndex(({ customerKey }) => customerKey === updateItem.customerKey);
                             }
                         }
-                        else if (assetType === 'folders') {
+                        else if (assetType === "folders") {
                             itemId = updateItem.id;
                             updateIndex = manifestContextItems.findIndex(({ id }) => id === updateItem.id);
                         }
-                        if (typeof updateIndex !== 'undefined') {
+                        if (typeof updateIndex !== "undefined") {
                             manifestContextItems[updateIndex] = updateItem;
                         }
                     }
@@ -149,7 +154,7 @@ const updateManifest = (context, content) => __awaiter(void 0, void 0, void 0, f
         }
     }
     let manifestStr = JSON.stringify(manifestJSON);
-    manifestStr = yield (0, _1.scrubBldrSfmcEnv)(manifestStr);
+    //manifestStr = yield (0, _1.scrubBldrSfmcEnv)(manifestStr);
     let updatedManifest = JSON.parse(manifestStr);
     yield fs_1.default.writeFileSync(manifestPath, JSON.stringify(updatedManifest, null, 2));
 });

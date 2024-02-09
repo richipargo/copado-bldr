@@ -21,8 +21,8 @@ class Status {
          * Display Status messaging and state
          */
         this.displayStatus = () => __awaiter(this, void 0, void 0, function* () {
-            (0, display_1.displayLine)('Current Status', 'info');
-            yield getState('', true);
+            (0, display_1.displayLine)("Current Status", "info");
+            yield getState("", true);
             yield displayStashStatus();
         });
     }

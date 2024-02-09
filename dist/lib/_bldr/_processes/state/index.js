@@ -10,7 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.State = void 0;
-const keytar_sync_1 = require("keytar-sync");
 const store_1 = require("../../../_bldr_sdk/store");
 const display_1 = require("../../../_utils/display");
 const metrics_1 = require("../../../_utils/metrics");
@@ -62,10 +61,10 @@ class State {
             }
         };
         this.toggleVerbose = () => {
-            const isVerbose = store_1.state_conf.get('isVerbose');
-            if (isVerbose !== 'undefined') {
-                isVerbose && (0, display_1.displayLine)('Verbose messaging turned off', 'info');
-                !isVerbose && (0, display_1.displayLine)('Verbose messaging turned on', 'info');
+            const isVerbose = store_1.state_conf.get("isVerbose");
+            if (isVerbose !== "undefined") {
+                isVerbose && (0, display_1.displayLine)("Verbose messaging turned off", "info");
+                !isVerbose && (0, display_1.displayLine)("Verbose messaging turned on", "info");
                 store_1.state_conf.set({
                     isVerbose: !isVerbose,
                 });
@@ -77,13 +76,13 @@ class State {
             }
         };
         this.isVerbose = () => {
-            return store_1.state_conf.get('isVerbose') || false;
+            return store_1.state_conf.get("isVerbose") || false;
         };
         this.toggleTracking = () => {
-            const allowTracking = store_1.state_conf.get('allowTracking');
-            if (allowTracking !== 'undefined') {
-                allowTracking && (0, display_1.displayLine)('allowTracking turned off', 'info');
-                !allowTracking && (0, display_1.displayLine)('allowTracking turned on', 'info');
+            const allowTracking = store_1.state_conf.get("allowTracking");
+            if (allowTracking !== "undefined") {
+                allowTracking && (0, display_1.displayLine)("allowTracking turned off", "info");
+                !allowTracking && (0, display_1.displayLine)("allowTracking turned on", "info");
                 store_1.state_conf.set({
                     allowTracking: !allowTracking,
                 });
@@ -95,13 +94,13 @@ class State {
             }
         };
         this.allowTracking = () => {
-            return store_1.state_conf.get('allowTracking') || false;
+            return store_1.state_conf.get("allowTracking") || false;
         };
         this.toggleDebug = () => {
-            const debugMode = store_1.state_conf.get('debugMode');
-            if (debugMode !== 'undefined') {
-                debugMode && (0, display_1.displayLine)('debugMode turned off', 'info');
-                !debugMode && (0, display_1.displayLine)('debugMode turned on', 'info');
+            const debugMode = store_1.state_conf.get("debugMode");
+            if (debugMode !== "undefined") {
+                debugMode && (0, display_1.displayLine)("debugMode turned off", "info");
+                !debugMode && (0, display_1.displayLine)("debugMode turned on", "info");
                 store_1.state_conf.set({
                     debugMode: !debugMode,
                 });
@@ -113,7 +112,7 @@ class State {
             }
         };
         this.debugMode = () => {
-            return store_1.state_conf.get('debugMode') || false;
+            return store_1.state_conf.get("debugMode") || false;
         };
         this.debug = (debugContext, debugStatus, output) => {
             const debug = this.debugMode();
@@ -126,27 +125,29 @@ class State {
                     console.log(JSON.stringify(output.JSON.Results, null, 2));
                     return;
                 }
-                typeof output === 'string' ? console.log(output) : console.log(JSON.stringify(output, null, 2));
+                typeof output === "string"
+                    ? console.log(output)
+                    : console.log(JSON.stringify(output, null, 2));
             }
             catch (err) {
                 console.log(output);
             }
         };
         this.checkForTracking = () => __awaiter(this, void 0, void 0, function* () {
-            const hasAllowTracking = store_1.state_conf.has('allowTracking');
+            const hasAllowTracking = store_1.state_conf.has("allowTracking");
             if (!hasAllowTracking) {
-                yield (0, metrics_1.incrementMetric)('downloads');
+                yield (0, metrics_1.incrementMetric)("downloads");
                 store_1.state_conf.set({
                     allowTracking: true,
                 });
-                yield (0, display_1.displayLine)(`BLDR is configured to collect basic analytics`, 'info');
-                (0, display_1.displayLine)(`Visit https://github.com/basetime/bldr-sfmc for more information on what is being captured`, 'info');
-                (0, display_1.displayLine)(`If you wish to opt-out of analytics, run [ bldr config --analytics ] to disable this functionality`, 'info');
+                yield (0, display_1.displayLine)(`BLDR is configured to collect basic analytics`, "info");
+                yield (0, display_1.displayLine)(`Visit https://github.com/basetime/bldr-sfmc for more information on what is being captured`, "info");
+                yield (0, display_1.displayLine)(`If you wish to opt-out of analytics, run [ bldr config --analytics ] to disable this functionality`, "info");
             }
         });
         this.clearSession = () => __awaiter(this, void 0, void 0, function* () {
-            yield (0, keytar_sync_1.deletePassword)('bldr', 'currentSession');
-            const sessionDeleted = (yield (0, keytar_sync_1.getPassword)('bldr', 'currentSession')) ? false : true;
+            //await deletePassword("bldr", "currentSession");
+            const sessionDeleted = true;
             return sessionDeleted;
         });
     }

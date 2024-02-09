@@ -1,5 +1,5 @@
-import { Deploy } from '../../_bldr/_processes/deploy';
-import { Argv } from '../../_types/Argv';
+import { Deploy } from "../../_bldr/_processes/deploy";
+import { Argv } from "../../_types/Argv";
 const { deployPackage } = new Deploy();
 
 /**
@@ -10,5 +10,5 @@ const { deployPackage } = new Deploy();
  * @param {object} blueprint
  */
 export async function DeploySwitch(argv: Argv) {
-    return deployPackage(argv);
+  return deployPackage(argv);
 }

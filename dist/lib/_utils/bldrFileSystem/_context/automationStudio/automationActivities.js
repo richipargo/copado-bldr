@@ -10,67 +10,67 @@ exports.MappingByActivityTypeId = exports.MappingByActivityType = void 0;
 const MappingByActivityType = (activityType) => {
     let out;
     switch (activityType) {
-        case 'queryactivity':
+        case "queryactivity":
             out = {
                 objectTypeId: 300,
-                api: 'queries',
-                name: 'queryactivity',
-                objectIdKey: 'queryDefinitionId',
-                folder: 'Automation Studio/Query',
+                api: "queries",
+                name: "queryactivity",
+                objectIdKey: "queryDefinitionId",
+                folder: "automation-studio/Query",
             };
             break;
-        case 'ssjsactivity':
+        case "ssjsactivity":
             out = {
                 objectTypeId: 423,
-                api: 'scripts',
-                name: 'ssjsactivity',
-                objectIdKey: 'ssjsActivityId',
-                folder: 'Automation Studio/Scripts',
+                api: "scripts",
+                name: "ssjsactivity",
+                objectIdKey: "ssjsActivityId",
+                folder: "automation-studio/Scripts",
             };
             break;
-        case 'importactivity':
+        case "importactivity":
             out = {
                 objectTypeId: 43,
-                api: 'imports',
-                name: 'importactivity',
-                objectIdKey: 'importDefinitionId',
-                folder: 'Automation Studio/File Imports',
+                api: "imports",
+                name: "importactivity",
+                objectIdKey: "importDefinitionId",
+                folder: "automation-studio/File Imports",
             };
             break;
-        case 'transferactivity':
+        case "transferactivity":
             out = {
                 objectTypeId: 53,
-                api: 'filetransfers',
-                name: 'transferactivity',
-                objectIdKey: 'id',
-                folder: 'Automation Studio/File Transfers',
+                api: "filetransfers",
+                name: "transferactivity",
+                objectIdKey: "id",
+                folder: "automation-studio/File Transfers",
             };
             break;
-        case 'filteractivity':
+        case "filteractivity":
             out = {
                 objectTypeId: 303,
-                api: 'filters',
-                name: 'filteractivity',
-                objectIdKey: 'filterActivityId',
-                folder: 'Automation Studio/Filters',
+                api: "filters",
+                name: "filteractivity",
+                objectIdKey: "filterActivityId",
+                folder: "automation-studio/Filters",
             };
             break;
-        case 'dataextractactivity':
+        case "dataextractactivity":
             out = {
                 objectTypeId: 73,
-                api: 'dataextracts',
-                name: 'dataextractactivity',
-                objectIdKey: 'dataExtractDefinitionId',
-                folder: 'Automation Studio/Extracts',
+                api: "dataextracts",
+                name: "dataextractactivity",
+                objectIdKey: "dataExtractDefinitionId",
+                folder: "automation-studio/Extracts",
             };
             break;
-        case 'userinitiatedsend':
+        case "userinitiatedsend":
             out = {
                 objectTypeId: 42,
-                api: 'EmailSendDefinition',
-                name: 'userinitiatedsend',
-                objectIdKey: 'ObjectID',
-                folder: 'Automation Studio/User-Initiated',
+                api: "EmailSendDefinition",
+                name: "userinitiatedsend",
+                objectIdKey: "ObjectID",
+                folder: "automation-studio/User-Initiated",
             };
             break;
         default:
@@ -89,58 +89,58 @@ const MappingByActivityTypeId = (activityTypeId) => {
     switch (activityTypeId) {
         case 300:
             out = {
-                api: 'queries',
-                name: 'queryactivity',
-                objectIdKey: 'queryDefinitionId',
-                folder: 'Automation Studio/Query',
+                api: "queries",
+                name: "queryactivity",
+                objectIdKey: "queryDefinitionId",
+                folder: "automation-studio/Query",
             };
             break;
         case 423:
             out = {
-                api: 'scripts',
-                name: 'ssjsactivity',
-                objectIdKey: 'ssjsActivityId',
-                folder: 'Automation Studio/Scripts',
+                api: "scripts",
+                name: "ssjsactivity",
+                objectIdKey: "ssjsActivityId",
+                folder: "automation-studio/Scripts",
             };
             break;
         case 43:
             out = {
-                api: 'imports',
-                name: 'importactivity',
-                objectIdKey: 'importDefinitionId',
-                folder: 'Automation Studio/File Imports',
+                api: "imports",
+                name: "importactivity",
+                objectIdKey: "importDefinitionId",
+                folder: "automation-studio/File Imports",
             };
             break;
         case 53:
             out = {
-                api: 'filetransfers',
-                name: 'transferactivity',
-                objectIdKey: 'id',
-                folder: 'Automation Studio/File Transfers',
+                api: "filetransfers",
+                name: "transferactivity",
+                objectIdKey: "id",
+                folder: "automation-studio/File Transfers",
             };
             break;
         case 303:
             out = {
-                api: 'filters',
-                name: 'filteractivity',
-                objectIdKey: 'filterActivityId',
-                folder: 'Automation Studio/Filters',
+                api: "filters",
+                name: "filteractivity",
+                objectIdKey: "filterActivityId",
+                folder: "automation-studio/Filters",
             };
             break;
         case 73:
             out = {
-                api: 'dataextracts',
-                name: 'dataextractactivity',
-                objectIdKey: 'dataExtractDefinitionId',
-                folder: 'Automation Studio/Extracts',
+                api: "dataextracts",
+                name: "dataextractactivity",
+                objectIdKey: "dataExtractDefinitionId",
+                folder: "automation-studio/Extracts",
             };
             break;
         case 42:
             out = {
-                api: 'EmailSendDefinition',
-                name: 'userinitiatedsend',
-                objectIdKey: 'ObjectID',
-                folder: 'Automation Studio/User-Initiated',
+                api: "EmailSendDefinition",
+                name: "userinitiatedsend",
+                objectIdKey: "ObjectID",
+                folder: "automation-studio/User-Initiated",
             };
             break;
     }

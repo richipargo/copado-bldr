@@ -19,13 +19,13 @@ To view full BLDR documentation, visit [getting-started](https://bldr.io/documen
 ## Installation
 
 1. Opening the terminal and check if you have the following:
-    - Ensure you have Node.js installed by typing `node --version`
-        - If you do not have Node.js installed visit [nodejs.org](https://www.nodejs.org) and follow the instructions for installation
-    - Ensure you have GIT installed by typing `git version`
-        - If you do not have GIT installed go to [git-scm.com/downloads](https://www.git-scm.com/downloads) and follow the instructions for installation
-    - Install BLDR-SFMC CLI
-    - In your terminal run `npm install -g @basetime/bldr-sfmc`
-        - NOTE: You must include the `-g` flag to be able to use this across multiple projects
+   - Ensure you have Node.js installed by typing `node --version`
+     - If you do not have Node.js installed visit [nodejs.org](https://www.nodejs.org) and follow the instructions for installation
+   - Ensure you have GIT installed by typing `git version`
+     - If you do not have GIT installed go to [git-scm.com/downloads](https://www.git-scm.com/downloads) and follow the instructions for installation
+   - Install BLDR-SFMC CLI
+   - In your terminal run `npm install -g @basetime/bldr-sfmc`
+     - NOTE: You must include the `-g` flag to be able to use this across multiple projects
 
 <br>
 
@@ -61,7 +61,7 @@ BLDR is configured so you can use it across as many SFMC instances as you requir
 1. In SFMC, navigate to `Settings > Setup > Platform Tools > Apps > Installed Packages`
 2. Click on `New` to create a new Package and name it `bldr-cli`
 3. Click on `Add Component` to add a new API Component and select `API Integration` and then `Server-to-Server` or `Web App`
-    1. For `Web App` configurations, include `https://bldr.io/cli/sfmc/authenticate/` as the Redirect URI
+   1. For `Web App` configurations, include `https://bldr.io/cli/sfmc/authenticate/` as the Redirect URI
 4. Navigate to `Access` and ensure that the Installed Package is provisioned for all desired Business Units
 5. Update the scope of the Installed Package to match the following:
 
@@ -76,7 +76,7 @@ BLDR is configured so you can use it across as many SFMC instances as you requir
 | Automations          | Read, Write |
 | Journeys             | Read, Write |
 | List and Subscribers | Read        |
-| Data Extensions      | Read, Write |
+| data-extensions      | Read, Write |
 | File Locations       | Read, Write |
 | Accounts             | Read        |
 
@@ -88,10 +88,10 @@ Web App Configurations will use the [oAuth 2 authentication flow](https://develo
 
 To facilitate this flow, BLDR will:
 
--   Use a localhost NodeJS server to open your web browser to the [SFMC Authorization URL](https://developer.salesforce.com/docs/marketing/marketing-cloud/guide/authorization-code.html)
--   Once logged in, SFMC will send the challenge code to `https://bldr.io/cli/sfmc/authenticate/` which points to a Google Cloud function
--   The Google Cloud function will serve a basic HTML page which passes the challenge code back to the localhost server to validate and receive the access token
--   Once the process is complete, the server will close
+- Use a localhost NodeJS server to open your web browser to the [SFMC Authorization URL](https://developer.salesforce.com/docs/marketing/marketing-cloud/guide/authorization-code.html)
+- Once logged in, SFMC will send the challenge code to `https://bldr.io/cli/sfmc/authenticate/` which points to a Google Cloud function
+- The Google Cloud function will serve a basic HTML page which passes the challenge code back to the localhost server to validate and receive the access token
+- Once the process is complete, the server will close
 
 <br>
 
@@ -107,12 +107,12 @@ SFMC Web and Public App Installed Packages enforce that all Redirect URIs use th
 
 1. In your terminal, run `bldr config -n`
 2. Follow the prompts and input the following from the Installed Package:
-    - Name the configuration
-    - Select `Server-to-Server` or `Web App` integration
-    - Parent MID
-    - Client ID
-    - Client Secret
-    - Auth URI
+   - Name the configuration
+   - Select `Server-to-Server` or `Web App` integration
+   - Parent MID
+   - Client ID
+   - Client Secret
+   - Auth URI
 
 <br>
 
@@ -132,19 +132,19 @@ If you do not wish to have these metrics gathered as you use BLDR please run `bl
 
 Analytics Gathered:
 
--   Initial Download
--   New Configuration
--   Push To SFMC
--   Package
--   Package Deploy
--   Content Builder Project Initiate
--   Data Extension Initiate
--   Content Builder Search Folders
--   Content Builder Search Assets
--   Data Extension Search Folders
--   Data Extension Search Assets
--   Content Builder Clone Folders
--   Content Builder Clone Assets
--   Data Extension Clone Folders
--   Data Extension Clone Assets
-    <br>
+- Initial Download
+- New Configuration
+- Push To SFMC
+- Package
+- Package Deploy
+- Content Builder Project Initiate
+- Data Extension Initiate
+- Content Builder Search Folders
+- Content Builder Search Assets
+- Data Extension Search Folders
+- Data Extension Search Assets
+- Content Builder Clone Folders
+- Content Builder Clone Assets
+- Data Extension Clone Folders
+- Data Extension Clone Assets
+  <br>

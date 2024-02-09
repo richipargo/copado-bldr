@@ -18,21 +18,27 @@ const setContentBuilderDefinition = (sfmcUpdateObject, updatedContent) => __awai
     let assetOutput;
     updatedContent = yield (0, bldrFileSystem_1.replaceBldrSfmcEnv)(updatedContent);
     switch (sfmcUpdateObject.assetType.name) {
-        case 'webpage':
-            assetOutput = updatedContent && (yield (0, CloudPage_1.setCloudPage)(sfmcUpdateObject, updatedContent));
+        case "webpage":
+            assetOutput =
+                updatedContent &&
+                    (yield (0, CloudPage_1.setCloudPage)(sfmcUpdateObject, updatedContent));
             break;
-        case 'htmlemail':
-            assetOutput = updatedContent && (yield (0, HTMLEmail_1.setHTMLEmail)(sfmcUpdateObject, updatedContent));
+        case "htmlemail":
+            assetOutput =
+                updatedContent &&
+                    (yield (0, HTMLEmail_1.setHTMLEmail)(sfmcUpdateObject, updatedContent));
             break;
-        case 'htmlblock':
-        case 'codesnippetblock':
-        case 'jscoderesource':
-        case 'jsoncoderesource':
-        case 'csscoderesource':
-        case 'textcoderesource':
-        case 'rsscoderesource':
-        case 'xmlcoderesource':
-            assetOutput = updatedContent && (yield (0, ContentBlock_1.SetContentBlock)(sfmcUpdateObject, updatedContent));
+        case "htmlblock":
+        case "codesnippetblock":
+        case "jscoderesource":
+        case "jsoncoderesource":
+        case "csscoderesource":
+        case "textcoderesource":
+        case "rsscoderesource":
+        case "xmlcoderesource":
+            assetOutput =
+                updatedContent &&
+                    (yield (0, ContentBlock_1.SetContentBlock)(sfmcUpdateObject, updatedContent));
             break;
         default:
             assetOutput = JSON.parse(updatedContent);
@@ -46,21 +52,21 @@ exports.setContentBuilderDefinition = setContentBuilderDefinition;
 const updateContentBuilderAssetContent = (asset, content) => {
     const assetType = (asset.assetType && asset.assetType.name) || null;
     switch (assetType) {
-        case 'webpage':
-        case 'htmlemail':
+        case "webpage":
+        case "htmlemail":
             asset.views.html.content = content;
             break;
-        case 'htmlblock':
-        case 'codesnippetblock':
-        case 'jscoderesource':
-        case 'jsoncoderesource':
-        case 'csscoderesource':
-        case 'textcoderesource':
-        case 'rsscoderesource':
-        case 'xmlcoderesource':
+        case "htmlblock":
+        case "codesnippetblock":
+        case "jscoderesource":
+        case "jsoncoderesource":
+        case "csscoderesource":
+        case "textcoderesource":
+        case "rsscoderesource":
+        case "xmlcoderesource":
             asset.content = content;
             break;
-        case 'textonlyemail':
+        case "textonlyemail":
             asset.views.text.content = content;
             break;
         default:

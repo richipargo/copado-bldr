@@ -22,7 +22,7 @@ class Stash {
          */
         this.displayStashStatus = () => __awaiter(this, void 0, void 0, function* () {
             const stashArr = yield this.getStashArray();
-            (0, display_1.displayLine)('Staged Files', 'info');
+            (0, display_1.displayLine)("Staged Files", "info");
             if (stashArr && stashArr.length) {
                 stashArr.forEach((stashObject) => {
                     const { ext, name } = (0, index_1.getFilePathDetails)(stashObject.path);
@@ -30,7 +30,7 @@ class Stash {
                 });
             }
             else {
-                (0, display_1.displayLine)('No Files Staged');
+                (0, display_1.displayLine)("No Files Staged");
             }
         });
         this.clearStash = () => __awaiter(this, void 0, void 0, function* () {

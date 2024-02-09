@@ -19,6 +19,7 @@ const { initiateConfiguration, getInstanceConfiguration, listInstanceConfigurati
  *
  * @param {string} req
  * @param {object} argv
+ * @param {object} store
  *
  */
 const ConfigSwitch = (req, argv) => __awaiter(void 0, void 0, void 0, function* () {
@@ -26,7 +27,7 @@ const ConfigSwitch = (req, argv) => __awaiter(void 0, void 0, void 0, function* 
      * Configure New Instance
      */
     if (argv.n || argv.new) {
-        return initiateConfiguration();
+        return initiateConfiguration(argv);
     }
     /**
      * Get Configuration by Instance key
@@ -62,7 +63,7 @@ const ConfigSwitch = (req, argv) => __awaiter(void 0, void 0, void 0, function* 
     if (argv.debug) {
         return toggleDebug();
     }
-    if (argv['clear-session']) {
+    if (argv["clear-session"]) {
         return clearSession();
     }
     return;

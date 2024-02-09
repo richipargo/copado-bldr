@@ -18,7 +18,7 @@ const setHTMLEmail = (sfmcUpdateObject, updatedContent) => __awaiter(void 0, voi
         data: {
             email: {
                 options: {
-                    characterEncoding: 'utf-8',
+                    characterEncoding: "utf-8",
                 },
             },
         },
@@ -34,14 +34,14 @@ const setHTMLEmail = (sfmcUpdateObject, updatedContent) => __awaiter(void 0, voi
             },
         },
         assetType: {
-            name: 'htmlemail',
+            name: "htmlemail",
             id: 208,
         },
     };
-    if (Object.prototype.hasOwnProperty.call(sfmcUpdateObject, 'id')) {
+    if (Object.prototype.hasOwnProperty.call(sfmcUpdateObject, "id")) {
         returnObject.id = sfmcUpdateObject.id;
     }
-    if (Object.prototype.hasOwnProperty.call(sfmcUpdateObject, 'customerKey')) {
+    if (Object.prototype.hasOwnProperty.call(sfmcUpdateObject, "customerKey")) {
         returnObject.customerKey = sfmcUpdateObject.customerKey;
     }
     return returnObject;

@@ -21,10 +21,10 @@ const initiate = new initiate_1.Initiate();
  */
 function InitSwitch(argv) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (argv['update-env-keys']) {
+        if (argv["update-env-keys"]) {
             return initiate.updateKeys();
         }
-        if (argv['env-only']) {
+        if (argv["env-only"]) {
             return initiate.envOnly();
         }
         if (argv.cb) {

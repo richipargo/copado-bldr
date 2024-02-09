@@ -13,19 +13,19 @@ const chalk_1 = __importDefault(require("chalk"));
 const displayLine = (message, status) => {
     let statusOutput;
     switch (status) {
-        case 'success':
+        case "success":
             statusOutput = chalk_1.default.green;
             break;
-        case 'error':
+        case "error":
             statusOutput = chalk_1.default.red;
             break;
-        case 'info':
+        case "info":
             statusOutput = chalk_1.default.cyan;
             break;
-        case 'progress':
+        case "progress":
             statusOutput = chalk_1.default.yellow;
             break;
-        case 'warn':
+        case "warn":
             statusOutput = chalk_1.default.magenta;
             break;
         default:
@@ -40,18 +40,18 @@ exports.displayLine = displayLine;
  * @param status
  */
 const displayObject = (object, status) => {
-    displayLine('---');
+    displayLine("---");
     for (const o in object) {
-        if (typeof object[o] !== 'object') {
+        if (typeof object[o] !== "object") {
             displayLine(`${o} ${object[o]}`, status);
         }
     }
-    displayLine(' ');
+    displayLine(" ");
 };
 exports.displayObject = displayObject;
 const displayArrayOfStrings = (array, status) => {
-    displayLine('---');
+    displayLine("---");
     array.forEach((item) => displayLine(item, status));
-    displayLine(' ');
+    displayLine(" ");
 };
 exports.displayArrayOfStrings = displayArrayOfStrings;

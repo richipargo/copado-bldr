@@ -5,21 +5,23 @@ const getContentBuilderAssetContent = (asset) => {
     const assetType = asset.assetType.name;
     let content;
     switch (assetType) {
-        case 'webpage':
-        case 'htmlemail':
-            content = asset && asset.views && asset.views.html && asset.views.html.content;
+        case "webpage":
+        case "htmlemail":
+            content =
+                asset && asset.views && asset.views.html && asset.views.html.content;
             break;
-        case 'textonlyemail':
-            content = asset && asset.views && asset.views.text && asset.views.text.content;
+        case "textonlyemail":
+            content =
+                asset && asset.views && asset.views.text && asset.views.text.content;
             break;
-        case 'htmlblock':
-        case 'codesnippetblock':
-        case 'jscoderesource':
-        case 'jsoncoderesource':
-        case 'csscoderesource':
-        case 'textcoderesource':
-        case 'rsscoderesource':
-        case 'xmlcoderesource':
+        case "htmlblock":
+        case "codesnippetblock":
+        case "jscoderesource":
+        case "jsoncoderesource":
+        case "csscoderesource":
+        case "textcoderesource":
+        case "rsscoderesource":
+        case "xmlcoderesource":
             content = asset.content;
             break;
         default:

@@ -27,37 +27,41 @@ const createAutomationStudioEditableFiles = (assets) => __awaiter(void 0, void 0
             const fileName = asset.name || asset.Name;
             let folderPath = asset.category.folderPath || (assetType && assetType.folder);
             if (asset && asset.hasBeenDeleted && asset.hasBeenDeleted === true) {
-                (0, display_1.displayLine)(`Error Creating File [local | ${assetTypeName}]: Automation Definition Deleted`, 'error');
+                (0, display_1.displayLine)(`Error Creating File [local | ${assetTypeName}]: Automation Definition Deleted`, "error");
                 return;
             }
-            folderPath === 'my automations' ? 'Automation Studio/my automations' : folderPath;
-            folderPath = folderPath.includes('Automation Studio') ? folderPath : `Automation Studio/${folderPath}`;
+            folderPath === "my automations"
+                ? "automation-studio/my automations"
+                : folderPath;
+            folderPath = folderPath.includes("automation-studio")
+                ? folderPath
+                : `automation-studio/${folderPath}`;
             let content;
             let ext;
             let dirPath;
             let assetIdKey;
             switch (assetTypeName) {
-                case 'queryactivity':
+                case "queryactivity":
                     content = asset.queryText;
-                    ext = '.sql';
+                    ext = ".sql";
                     dirPath = `${folderPath}/${fileName}${ext}`;
                     break;
-                case 'ssjsactivity':
+                case "ssjsactivity":
                     content = asset.script;
-                    ext = '.js';
+                    ext = ".js";
                     dirPath = `${folderPath}/${fileName}${ext}`;
                     break;
                 default:
                     content = JSON.stringify(asset, null, 2);
-                    ext = '.json';
+                    ext = ".json";
                     dirPath = `${folderPath}/${fileName}${ext}`;
             }
             content = yield updateFilesFromConfiguration(content);
             const createFileResult = yield (0, fileSystem_1.createFile)(dirPath, content);
             createFileResult &&
-                (0, display_1.displayLine)(`Successfully Created [local | ${assetTypeName}]: ${asset.name || asset.Name}`, 'success');
+                (0, display_1.displayLine)(`Successfully Created [local | ${assetTypeName}]: ${asset.name || asset.Name}`, "success");
             !createFileResult &&
-                (0, display_1.displayLine)(`Error Creating File [local | ${assetTypeName}]: ${asset.name || asset.Name}`, 'error');
+                (0, display_1.displayLine)(`Error Creating File [local | ${assetTypeName}]: ${asset.name || asset.Name}`, "error");
         }
     }
     catch (err) {
