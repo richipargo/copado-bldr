@@ -243,7 +243,10 @@ const initiateBldrSDK = async (
       stateConfiguration.configurationType || "Server-to-Server";
 
     //const currentSession = await getPassword('bldr', 'currentSession');
-    const currentSession = fs.readFileSync("token.json", "utf8");
+    let currentSession;
+    if (fs.existsSync("/tmp/token.json")) {
+      currentSession = fs.readFileSync("/tmp/token.json", "utf8");
+    }
     const currentSessionJSON = currentSession && JSON.parse(currentSession);
     const currentAuthObject =
       currentSessionJSON && currentSessionJSON.authObject;
@@ -322,7 +325,7 @@ const initiateBldrSDK = async (
         debug("defined parent token JSON", "info", tokenJson);
 
         fs.writeFile(
-          "token.json",
+          "/tmp/token.json",
           JSON.stringify(tokenJson),
           {
             encoding: "utf8",
@@ -333,10 +336,11 @@ const initiateBldrSDK = async (
             if (err) console.log(err);
             else {
               debug("File written successfully", "info", tokenJson);
+
               debug(
                 "Reading json file",
                 "info",
-                JSON.parse(fs.readFileSync("token.json", "utf8"))
+                JSON.parse(fs.readFileSync("/tmp/token.json", "utf8"))
               );
             }
           }
@@ -351,11 +355,15 @@ const initiateBldrSDK = async (
                     })
                 );
                 **/
+        let tokenFile;
+        if (fs.existsSync("/tmp/token.json", "utf8")) {
+          tokenFile = fs.readFileSync("/tmp/token.json", "utf8")
+        }
 
         debug(
           "Check Session Saved",
           "info",
-          JSON.parse(fs.readFileSync("token.json", "utf8"))
+          tokenFile,
         );
 
         return newSession;
@@ -404,6 +412,7 @@ const initiateBldrSDK = async (
             ...verified,
           };
 
+          /*
           await setPassword(
             "bldr",
             "currentSession",
@@ -412,11 +421,13 @@ const initiateBldrSDK = async (
               authObject: verified,
             })
           );
+          */
 
           debug(
             "Check Session Saved",
             "info",
-            await getPassword("bldr", "currentSession")
+            ""
+            // await getPassword("bldr", "currentSession")
           );
         }
       } else if (
@@ -435,6 +446,7 @@ const initiateBldrSDK = async (
             ...sdkConfiguration,
             ...verified,
           };
+          /**
           await setPassword(
             "bldr",
             "currentSession",
@@ -443,10 +455,12 @@ const initiateBldrSDK = async (
               authObject: verified,
             })
           );
+          */
           debug(
             "Check Session Saved",
             "info",
-            await getPassword("bldr", "currentSession")
+            ""
+            // await getPassword("bldr", "currentSession")
           );
         }
       }

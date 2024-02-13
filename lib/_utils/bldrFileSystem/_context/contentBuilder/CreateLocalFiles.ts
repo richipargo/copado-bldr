@@ -51,11 +51,7 @@ const createContentBuilderEditableFiles = async (
           break;
         case "textonlyemail":
           //@ts-ignore
-          content =
-            asset &&
-            asset.views &&
-            asset.views.text &&
-            asset.views.text.content;
+          content = asset && asset.views && asset.views.text && asset.views.text.content;
           ext = ".html";
           dirPath = `${folderPath}/${fileName}${ext}`;
           break;

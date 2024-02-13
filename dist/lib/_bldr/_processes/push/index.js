@@ -282,7 +282,7 @@ class Push {
                                 }
                                 break;
                             case "dataExtension":
-                                //createdFolders = await addNewFolders(folderPath);
+                                // createdFolders = await addNewFolders(folderPath);
                                 manifestJSON = yield (0, bldrFileSystem_1.readManifest)();
                                 manifestContextFolders =
                                     manifestJSON["dataExtension"] &&

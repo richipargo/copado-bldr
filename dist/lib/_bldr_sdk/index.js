@@ -193,7 +193,10 @@ const initiateBldrSDK = (authObject, instance, configurationType, account_id) =>
         stateConfiguration.configurationType =
             stateConfiguration.configurationType || "Server-to-Server";
         //const currentSession = await getPassword('bldr', 'currentSession');
-        const currentSession = fs.readFileSync("token.json", "utf8");
+        let currentSession;
+        if (fs.existsSync("/tmp/token.json")) {
+            currentSession = fs.readFileSync("/tmp/token.json", "utf8");
+        }
         const currentSessionJSON = currentSession && JSON.parse(currentSession);
         const currentAuthObject = currentSessionJSON && currentSessionJSON.authObject;
         debug("Current session", "info", currentSession);
@@ -234,7 +237,7 @@ const initiateBldrSDK = (authObject, instance, configurationType, account_id) =>
                     authObject: accessToken,
                 };
                 debug("defined parent token JSON", "info", tokenJson);
-                fs.writeFile("token.json", JSON.stringify(tokenJson), {
+                fs.writeFile("/tmp/token.json", JSON.stringify(tokenJson), {
                     encoding: "utf8",
                     flag: "w",
                     mode: 0o666,
@@ -243,7 +246,7 @@ const initiateBldrSDK = (authObject, instance, configurationType, account_id) =>
                         console.log(err);
                     else {
                         debug("File written successfully", "info", tokenJson);
-                        debug("Reading json file", "info", JSON.parse(fs.readFileSync("token.json", "utf8")));
+                        debug("Reading json file", "info", JSON.parse(fs.readFileSync("/tmp/token.json", "utf8")));
                     }
                 });
                 /**
@@ -256,7 +259,11 @@ const initiateBldrSDK = (authObject, instance, configurationType, account_id) =>
                             })
                         );
                         **/
-                debug("Check Session Saved", "info", JSON.parse(fs.readFileSync("token.json", "utf8")));
+                let tokenFile;
+                if (fs.existsSync("/tmp/token.json", "utf8")) {
+                    tokenFile = fs.readFileSync("/tmp/token.json", "utf8");
+                }
+                debug("Check Session Saved", "info", tokenFile);
                 return newSession;
             }
         }
@@ -276,11 +283,19 @@ const initiateBldrSDK = (authObject, instance, configurationType, account_id) =>
                 debug("Initiate sdk Web-App: Received Verification", "info", verified);
                 if (verified) {
                     sdkConfiguration = Object.assign(Object.assign({}, sdkConfiguration), verified);
-                    yield setPassword("bldr", "currentSession", JSON.stringify({
+                    /*
+                    await setPassword(
+                      "bldr",
+                      "currentSession",
+                      JSON.stringify({
                         instance: stateInstance,
                         authObject: verified,
-                    }));
-                    debug("Check Session Saved", "info", yield getPassword("bldr", "currentSession"));
+                      })
+                    );
+                    */
+                    debug("Check Session Saved", "info", ""
+                    // await getPassword("bldr", "currentSession")
+                    );
                 }
             }
             else if ((currentSession && stateInstance !== currentSessionJSON.instance) ||
@@ -289,11 +304,19 @@ const initiateBldrSDK = (authObject, instance, configurationType, account_id) =>
                 debug("Initiate sdk Web-App: Received Verification", "info", verified);
                 if (verified) {
                     sdkConfiguration = Object.assign(Object.assign({}, sdkConfiguration), verified);
-                    yield setPassword("bldr", "currentSession", JSON.stringify({
+                    /**
+                    await setPassword(
+                      "bldr",
+                      "currentSession",
+                      JSON.stringify({
                         instance: stateInstance,
                         authObject: verified,
-                    }));
-                    debug("Check Session Saved", "info", yield getPassword("bldr", "currentSession"));
+                      })
+                    );
+                    */
+                    debug("Check Session Saved", "info", ""
+                    // await getPassword("bldr", "currentSession")
+                    );
                 }
             }
         }

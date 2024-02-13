@@ -26,7 +26,7 @@ const normalizedPackageManifestJSONPath = path.join(
  * @returns
  */
 const readBldrSfmcEnv = async () => {
-  const rootPath = (await getRootPath()) || path.normalize("./");
+  const rootPath = getRootPath() || path.normalize("./");
   // Get manifest JSON file
   const envPath = path.join(rootPath, "/copado/copado.json");
   if (fileExists(envPath)) {
@@ -41,7 +41,7 @@ const readBldrSfmcEnv = async () => {
  * @returns
  */
 const readBldrSfmcEnvTemplate = async () => {
-  const rootPath = (await getRootPath()) || path.normalize("./");
+  const rootPath = getRootPath() || path.normalize("./");
   // Get manifest JSON file
   const envPath = path.join(rootPath, "template.sfmc.env.json");
   if (fileExists(envPath)) {
@@ -58,7 +58,7 @@ const createEnv = async (config = null, template = true) => {
     parentMID: "",
   };
 
-  const rootPath = (await getRootPath()) || path.normalize("./");
+  const rootPath = getRootPath() || path.normalize("./");
   // Get manifest JSON file
   const envPath = path.join(rootPath, "/copado/copado.json");
   const templateEnvPath = path.join(rootPath, "template.sfmc.env.json");
@@ -83,7 +83,7 @@ const createEnv = async (config = null, template = true) => {
 };
 
 const scrubBldrSfmcEnv = async (content: string) => {
-  const rootPath = (await getRootPath()) || path.normalize("./");
+  const rootPath = getRootPath() || path.normalize("./");
   // Get manifest JSON file
   const envPath = path.join(rootPath, "/copado/copado.json");
 
@@ -92,7 +92,7 @@ const scrubBldrSfmcEnv = async (content: string) => {
     for (const c in config) {
       const key = c;
       const value = config[c];
-      if (value !== "" && content.match(value)) {
+      if (value !== "" && !(value instanceof Object) && content.match(value)) {
         content = content.replace(value, `{{${key}}}`);
       }
     }
@@ -102,7 +102,7 @@ const scrubBldrSfmcEnv = async (content: string) => {
 };
 
 const replaceBldrSfmcEnv = async (content: string) => {
-  const rootPath = (await getRootPath()) || path.normalize("./");
+  const rootPath = getRootPath() || path.normalize("./");
   // Get manifest JSON file
   const envPath = path.join(rootPath, "/copado/copado.json");
   if (fileExists(envPath)) {
@@ -127,7 +127,7 @@ const replaceBldrSfmcEnv = async (content: string) => {
  * @returns
  */
 const readManifest = async () => {
-  const rootPath = (await getRootPath()) || path.normalize("./");
+  const rootPath = getRootPath() || path.normalize("./");
   // Get manifest JSON file
   const manifestPath = path.join(rootPath, ".copado.manifest.json");
 
@@ -142,7 +142,7 @@ const readManifest = async () => {
  * @returns
  */
 const readPackageManifest = async () => {
-  const rootPath = (await getRootPath()) || path.normalize("./");
+  const rootPath = getRootPath() || path.normalize("./");
   // Get manifest JSON file
   const packagePath = path.join(rootPath, "package.manifest.json");
 

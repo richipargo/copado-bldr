@@ -7,9 +7,7 @@ import isEqual from "lodash.isequal";
 import fs from "fs";
 import path from "path";
 import { fileExists, getRootPath } from "../fileSystem";
-import { displayLine } from "../display";
 import { scrubBldrSfmcEnv } from ".";
-import { normalizedManifestJSONPath } from ".";
 const { updateFilesFromConfiguration } = new User_BLDR_Config();
 
 enum ObjectIdKeys {
@@ -32,7 +30,7 @@ const updateManifest = async (
     throw new Error("Context is required");
   }
 
-  const rootPath = (await getRootPath()) || path.normalize("./");
+  const rootPath = getRootPath() || path.normalize("./");
   const manifestPath = path.normalize(`${rootPath}.copado.manifest.json`);
   if (!fileExists(manifestPath)) {
     const init = {};
@@ -119,9 +117,7 @@ const updateManifest = async (
               Object.prototype.hasOwnProperty.call(updateItem, objectIdKey) &&
               updateItem[objectIdKey];
             //@ts-ignore
-            manifestObj = manifestContextItems.find(
-              (item) => item[objectIdKey] === itemId
-            );
+            manifestObj = manifestContextItems.find((item) => item[objectIdKey] === itemId);
           } else if (
             ["dataExtension", "sharedDataExtension"].includes(context)
           ) {
@@ -204,7 +200,7 @@ const updateManifest = async (
   manifestStr = await scrubBldrSfmcEnv(manifestStr);
   let updatedManifest = JSON.parse(manifestStr);
 
-  await fs.writeFileSync(
+  fs.writeFileSync(
     manifestPath,
     JSON.stringify(updatedManifest, null, 2)
   );

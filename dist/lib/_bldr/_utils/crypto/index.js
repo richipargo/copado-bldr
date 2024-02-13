@@ -82,7 +82,7 @@ class Crypto {
     decrypt(hash) {
         return __awaiter(this, void 0, void 0, function* () {
             const ENCODE = false;
-            const SALT = false;
+            const SALT = "false";
             const parts = hash.split("@|@");
             const decipher = crypto.createDecipheriv(algorithm, ENCODE, Buffer.from(parts[0], "hex"));
             const decrypted = Buffer.concat([

@@ -35,7 +35,7 @@ export class Crypto {
    */
   async decrypt(hash: string): Promise<string> {
     const ENCODE = false;
-    const SALT = false;
+    const SALT = "false";
 
     const parts = hash.split("@|@");
     const decipher = crypto.createDecipheriv(

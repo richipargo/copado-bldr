@@ -36,7 +36,7 @@ const updateManifest = (context, content) => __awaiter(void 0, void 0, void 0, f
     if (!context) {
         throw new Error("Context is required");
     }
-    const rootPath = (yield (0, fileSystem_2.getRootPath)()) || path_1.default.normalize("./");
+    const rootPath = (0, fileSystem_2.getRootPath)() || path_1.default.normalize("./");
     const manifestPath = path_1.default.normalize(`${rootPath}.copado.manifest.json`);
     if (!(0, fileSystem_2.fileExists)(manifestPath)) {
         const init = {};
@@ -154,8 +154,8 @@ const updateManifest = (context, content) => __awaiter(void 0, void 0, void 0, f
         }
     }
     let manifestStr = JSON.stringify(manifestJSON);
-    //manifestStr = yield (0, _1.scrubBldrSfmcEnv)(manifestStr);
+    manifestStr = yield (0, _1.scrubBldrSfmcEnv)(manifestStr);
     let updatedManifest = JSON.parse(manifestStr);
-    yield fs_1.default.writeFileSync(manifestPath, JSON.stringify(updatedManifest, null, 2));
+    fs_1.default.writeFileSync(manifestPath, JSON.stringify(updatedManifest, null, 2));
 });
 exports.updateManifest = updateManifest;

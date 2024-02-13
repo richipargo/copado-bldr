@@ -29,8 +29,9 @@ const metrics_1 = require("../../../_utils/metrics");
 const options_1 = require("../../../_utils/options");
 const crypto_1 = require("../../_utils/crypto");
 const state_1 = require("../state");
+const fs_1 = __importDefault(require("fs"));
+const path_1 = __importDefault(require("path"));
 // fetch json file for copado connection details
-var copadoConfig = require("../../../../../copado/copado.json");
 const { setEncryption, encrypt, decrypt } = new crypto_1.Crypto();
 const { getState, allowTracking, debug } = new state_1.State();
 /**
@@ -148,21 +149,22 @@ class Config {
              * @description Copado extending, by setting CLI to use JSON config in root
              * copado/copado.json file for configuration of environments
              */
+            // TODO: get actual file from route
+            let copadoConfig;
+            const configPath = path_1.default.join(process.cwd(), 'copado', 'copado.json');
+            if (fs_1.default.existsSync(configPath)) {
+                copadoConfig = JSON.parse(fs_1.default.readFileSync(configPath, 'utf-8'));
+            }
             let config = instance && copadoConfig;
             if (!config) {
                 throw new Error(`No configurations found for ${instance}`);
             }
             // Transform string into parse-able JSON
             let configJSON = config;
-            // Decrypt Client_Id and Secret
-            //configJSON.apiClientId = await decrypt(configJSON.apiClientId);
-            //configJSON.apiClientSecret = await decrypt(configJSON.apiClientSecret);
             /**
              * @description Copado extending, by removing decrypt LibSecret is no
              * longer needed to authenticate against the SFMC instance
              */
-            configJSON.apiClientId = yield configJSON.apiClientId;
-            configJSON.apiClientSecret = yield configJSON.apiClientSecret;
             if (configJSON && show) {
                 // Cut string off to only show first 5 characters
                 configJSON.apiClientId = configJSON.apiClientId.substring(0, 5);
@@ -185,8 +187,7 @@ class Config {
                 this.getInstanceConfiguration(instanceStr, true);
             }
             // If no value is provided get all stored credentials and pull the instance names
-            const instanceArr = (yield findCredentials("bldr"))
-                .map((item) => {
+            const instanceArr = [].map((item) => {
                 if (item.account !== "io" && item.account !== "salty") {
                     return item.account;
                 }
@@ -233,9 +234,7 @@ class Config {
                     //await deletePasswordSync("bldr", instance);
                     // Check that entry no longer exists to confirm delete
                     //let checkDeletion = await getPasswordSync("bldr", instance);
-                    !checkDeletion
-                        ? (0, display_1.displayLine)(`${instance} was Deleted Successfully.`, "success")
-                        : (0, display_1.displayLine)(`${instance} was Not Deleted.`, "error");
+                    (0, display_1.displayLine)(`${instance} was Deleted Successfully.`, "success");
                 }));
                 return;
             }

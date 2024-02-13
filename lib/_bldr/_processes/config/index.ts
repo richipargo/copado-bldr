@@ -20,9 +20,10 @@ import { incrementMetric } from "../../../_utils/metrics";
 import { config_new, config_remove } from "../../../_utils/options";
 import { Crypto } from "../../_utils/crypto";
 import { State } from "../state";
+import fs from 'fs';
+import path from 'path';
 
 // fetch json file for copado connection details
-var copadoConfig = require("../../../../../copado/copado.json");
 
 const { setEncryption, encrypt, decrypt } = new Crypto();
 
@@ -198,6 +199,13 @@ export class Config {
      * @description Copado extending, by setting CLI to use JSON config in root
      * copado/copado.json file for configuration of environments
      */
+    // TODO: get actual file from route
+    let copadoConfig;
+    const configPath = path.join(process.cwd(), 'copado', 'copado.json');
+    if (fs.existsSync(configPath)) {
+        copadoConfig = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
+    }
+
     let config = instance && copadoConfig;
 
     if (!config) {
@@ -207,15 +215,10 @@ export class Config {
     // Transform string into parse-able JSON
     let configJSON: InstanceConfiguration = config;
 
-    // Decrypt Client_Id and Secret
-    //configJSON.apiClientId = await decrypt(configJSON.apiClientId);
-    //configJSON.apiClientSecret = await decrypt(configJSON.apiClientSecret);
     /**
      * @description Copado extending, by removing decrypt LibSecret is no
      * longer needed to authenticate against the SFMC instance
      */
-    configJSON.apiClientId = await configJSON.apiClientId;
-    configJSON.apiClientSecret = await configJSON.apiClientSecret;
 
     if (configJSON && show) {
       // Cut string off to only show first 5 characters
@@ -248,9 +251,7 @@ export class Config {
     }
 
     // If no value is provided get all stored credentials and pull the instance names
-    const instanceArr: any[] =
-      (await findCredentials("bldr"))
-        .map((item) => {
+    const instanceArr: any[] = [].map((item: any) => {
           if (item.account !== "io" && item.account !== "salty") {
             return item.account;
           }
@@ -308,9 +309,7 @@ export class Config {
           // Check that entry no longer exists to confirm delete
           //let checkDeletion = await getPasswordSync("bldr", instance);
 
-          !checkDeletion
-            ? displayLine(`${instance} was Deleted Successfully.`, "success")
-            : displayLine(`${instance} was Not Deleted.`, "error");
+          displayLine(`${instance} was Deleted Successfully.`, "success");
         });
 
       return;

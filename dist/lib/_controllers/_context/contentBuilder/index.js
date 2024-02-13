@@ -35,11 +35,11 @@ const { allowTracking, getState, debug } = new state_1.State();
 const ContentBuilderSwitch = (req, argv) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const bldr = yield (0, _bldr_sdk_1.initiateBldrSDK)();
-        //@ts-ignore //TODO figure out why contentBuilder is throwing TS error
-        const { contentBuilder } = bldr.cli;
         if (!bldr) {
             throw new Error("unable to load sdk");
         }
+        console.log(bldr, bldr.cli);
+        const { contentBuilder } = bldr.cli;
         // If authObject is not passed use the current set credentials to initiate SDK
         const currentState = yield getState();
         switch (req) {

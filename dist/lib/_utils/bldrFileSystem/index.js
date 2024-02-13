@@ -38,7 +38,7 @@ exports.normalizedPackageManifestJSONPath = normalizedPackageManifestJSONPath;
  * @returns
  */
 const readBldrSfmcEnv = () => __awaiter(void 0, void 0, void 0, function* () {
-    const rootPath = (yield (0, fileSystem_1.getRootPath)()) || path_1.default.normalize("./");
+    const rootPath = (0, fileSystem_1.getRootPath)() || path_1.default.normalize("./");
     // Get manifest JSON file
     const envPath = path_1.default.join(rootPath, "/copado/copado.json");
     if ((0, fileSystem_1.fileExists)(envPath)) {
@@ -53,7 +53,7 @@ exports.readBldrSfmcEnv = readBldrSfmcEnv;
  * @returns
  */
 const readBldrSfmcEnvTemplate = () => __awaiter(void 0, void 0, void 0, function* () {
-    const rootPath = (yield (0, fileSystem_1.getRootPath)()) || path_1.default.normalize("./");
+    const rootPath = (0, fileSystem_1.getRootPath)() || path_1.default.normalize("./");
     // Get manifest JSON file
     const envPath = path_1.default.join(rootPath, "template.sfmc.env.json");
     if ((0, fileSystem_1.fileExists)(envPath)) {
@@ -69,7 +69,7 @@ const createEnv = (config = null, template = true) => __awaiter(void 0, void 0, 
         authentication_uri: "",
         parentMID: "",
     };
-    const rootPath = (yield (0, fileSystem_1.getRootPath)()) || path_1.default.normalize("./");
+    const rootPath = (0, fileSystem_1.getRootPath)() || path_1.default.normalize("./");
     // Get manifest JSON file
     const envPath = path_1.default.join(rootPath, "/copado/copado.json");
     const templateEnvPath = path_1.default.join(rootPath, "template.sfmc.env.json");
@@ -86,7 +86,7 @@ const createEnv = (config = null, template = true) => __awaiter(void 0, void 0, 
 });
 exports.createEnv = createEnv;
 const scrubBldrSfmcEnv = (content) => __awaiter(void 0, void 0, void 0, function* () {
-    const rootPath = (yield (0, fileSystem_1.getRootPath)()) || path_1.default.normalize("./");
+    const rootPath = (0, fileSystem_1.getRootPath)() || path_1.default.normalize("./");
     // Get manifest JSON file
     const envPath = path_1.default.join(rootPath, "/copado/copado.json");
     if ((0, fileSystem_1.fileExists)(envPath)) {
@@ -94,7 +94,7 @@ const scrubBldrSfmcEnv = (content) => __awaiter(void 0, void 0, void 0, function
         for (const c in config) {
             const key = c;
             const value = config[c];
-            if (value !== "" && content.match(value)) {
+            if (value !== "" && !(value instanceof Object) && content.match(value)) {
                 content = content.replace(value, `{{${key}}}`);
             }
         }
@@ -103,7 +103,7 @@ const scrubBldrSfmcEnv = (content) => __awaiter(void 0, void 0, void 0, function
 });
 exports.scrubBldrSfmcEnv = scrubBldrSfmcEnv;
 const replaceBldrSfmcEnv = (content) => __awaiter(void 0, void 0, void 0, function* () {
-    const rootPath = (yield (0, fileSystem_1.getRootPath)()) || path_1.default.normalize("./");
+    const rootPath = (0, fileSystem_1.getRootPath)() || path_1.default.normalize("./");
     // Get manifest JSON file
     const envPath = path_1.default.join(rootPath, "/copado/copado.json");
     if ((0, fileSystem_1.fileExists)(envPath)) {
@@ -127,7 +127,7 @@ exports.replaceBldrSfmcEnv = replaceBldrSfmcEnv;
  * @returns
  */
 const readManifest = () => __awaiter(void 0, void 0, void 0, function* () {
-    const rootPath = (yield (0, fileSystem_1.getRootPath)()) || path_1.default.normalize("./");
+    const rootPath = (0, fileSystem_1.getRootPath)() || path_1.default.normalize("./");
     // Get manifest JSON file
     const manifestPath = path_1.default.join(rootPath, ".copado.manifest.json");
     if ((0, fileSystem_1.fileExists)(manifestPath)) {
@@ -142,7 +142,7 @@ exports.readManifest = readManifest;
  * @returns
  */
 const readPackageManifest = () => __awaiter(void 0, void 0, void 0, function* () {
-    const rootPath = (yield (0, fileSystem_1.getRootPath)()) || path_1.default.normalize("./");
+    const rootPath = (0, fileSystem_1.getRootPath)() || path_1.default.normalize("./");
     // Get manifest JSON file
     const packagePath = path_1.default.join(rootPath, "package.manifest.json");
     if ((0, fileSystem_1.fileExists)(packagePath)) {
