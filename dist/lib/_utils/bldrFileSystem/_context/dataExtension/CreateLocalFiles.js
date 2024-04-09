@@ -23,30 +23,26 @@ const createEmailStudioEditableFiles = (assets) => __awaiter(void 0, void 0, voi
         for (const a in assets) {
             const asset = assets[a];
             const assetType = (asset.assetType && asset.assetType.name) || null;
-            const folderPath = (Object.prototype.hasOwnProperty.call(asset.category, "folderPath") &&
-                asset.category.folderPath) ||
-                "";
+            const folderPath = (Object.prototype.hasOwnProperty.call(asset.category, 'folderPath') && asset.category.folderPath) || '';
             const fileName = asset.name;
             let content;
             let ext;
             let dirPath;
             switch (assetType) {
-                case "dataextension":
+                case 'dataextension':
                     content = JSON.stringify(asset, null, 2);
-                    ext = ".json";
+                    ext = '.json';
                     dirPath = `${folderPath}/${fileName}${ext}`;
                     break;
                 default:
                     content = JSON.stringify(asset, null, 2);
-                    ext = ".json";
+                    ext = '.json';
                     dirPath = `${folderPath}/${fileName}${ext}`;
             }
             content = yield updateFilesFromConfiguration(content);
             const createFileResult = yield (0, fileSystem_1.createFile)(dirPath, content);
-            createFileResult &&
-                (0, display_1.displayLine)(`Successfully Created [local]: ${asset.name}`, "success");
-            !createFileResult &&
-                (0, display_1.displayLine)(`Error Creating File [local]: ${asset.name}`, "error");
+            createFileResult && (0, display_1.displayLine)(`Successfully Created [local]: ${asset.name}`, 'success');
+            !createFileResult && (0, display_1.displayLine)(`Error Creating File [local]: ${asset.name}`, 'error');
         }
     }
     catch (err) {

@@ -3,9 +3,9 @@ module.exports.config_remove = (instance) => {
     return {
         interactive: { default: true },
         confirmDelete: {
-            type: "confirm",
+            type: 'confirm',
             describe: `Please confirm deletion of ${instance}`,
-            prompt: "always",
+            prompt: 'always',
         },
     };
 };

@@ -22,7 +22,7 @@ class Stash {
          */
         this.displayStashStatus = () => __awaiter(this, void 0, void 0, function* () {
             const stashArr = yield this.getStashArray();
-            (0, display_1.displayLine)("Staged Files", "info");
+            (0, display_1.displayLine)('Staged Files', 'info');
             if (stashArr && stashArr.length) {
                 stashArr.forEach((stashObject) => {
                     const { ext, name } = (0, index_1.getFilePathDetails)(stashObject.path);
@@ -30,11 +30,11 @@ class Stash {
                 });
             }
             else {
-                (0, display_1.displayLine)("No Files Staged");
+                (0, display_1.displayLine)('No Files Staged');
             }
         });
         this.clearStash = () => __awaiter(this, void 0, void 0, function* () {
-            const instance = yield getCurrentInstance();
+            const instance = "testauto";
             yield store_1.stash_conf.set({ [instance]: { stash: [] } });
             yield this.displayStashStatus();
         });
@@ -45,7 +45,9 @@ class Stash {
          *
          */
         this.saveStash = (stashUpdate) => __awaiter(this, void 0, void 0, function* () {
-            const instance = yield getCurrentInstance();
+            //const instance = yield getCurrentInstance();
+            console.log(stashUpdate);
+            const instance = "testauto";
             const instanceStash = store_1.stash_conf.get(instance);
             let stashArr = (instanceStash && instanceStash.stash) || [];
             if (Array.isArray(stashUpdate)) {
@@ -76,7 +78,7 @@ class Stash {
             yield store_1.stash_conf.set({ [instance]: { stash: stashArr } });
         });
         this.removeFromStashByBldrId = (bldrId) => __awaiter(this, void 0, void 0, function* () {
-            const instance = yield getCurrentInstance();
+            const instance = "testauto";
             const instanceStash = store_1.stash_conf.get(instance);
             let stashArr = (instanceStash && instanceStash.stash) || [];
             const stashIndex = stashArr.findIndex((stashItem) => stashItem.bldr.bldrId === bldrId);
@@ -88,7 +90,7 @@ class Stash {
             }
         });
         this.getStashArray = () => __awaiter(this, void 0, void 0, function* () {
-            const instance = yield getCurrentInstance();
+            const instance = "testauto";
             const stash = store_1.stash_conf.get(instance);
             return stash && stash.stash;
         });

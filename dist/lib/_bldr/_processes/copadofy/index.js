@@ -9,13 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Status = void 0;
+exports.Copadofy = void 0;
 const state_1 = require("../state");
-const stash_1 = require("../stash");
 const display_1 = require("../../../_utils/display");
 const { getState } = new state_1.State();
-const { displayStashStatus } = new stash_1.Stash();
-class Status {
+class Copadofy {
     constructor() {
         /**
          * Display Status messaging and state
@@ -23,8 +21,7 @@ class Status {
         this.displayStatus = () => __awaiter(this, void 0, void 0, function* () {
             (0, display_1.displayLine)('Current Status', 'info');
             yield getState('', true);
-            yield displayStashStatus();
         });
     }
 }
-exports.Status = Status;
+exports.Copadofy = Copadofy;

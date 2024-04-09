@@ -33,12 +33,12 @@ class Package {
             try {
                 const dirPath = yield (0, fileSystem_1.getRootPath)();
                 if (!(0, fileSystem_1.fileExists)(`${dirPath}.copado.manifest.json`)) {
-                    throw new Error("Please run [ bldr init ] or clone SFMC assets before running [ bldr package ]");
+                    throw new Error('Please run [ bldr init ] or clone SFMC assets before running [ bldr package ]');
                 }
                 let manifestJSON = yield (0, bldrFileSystem_1.readManifest)();
                 const existingPkg = yield (0, bldrFileSystem_1.readPackageManifest)();
                 yield (0, yargs_interactive_1.default)()
-                    .usage("$0 <command> [args]")
+                    .usage('$0 <command> [args]')
                     .interactive(yield (0, package_new_1.package_new)(existingPkg))
                     .then((initResults) => __awaiter(this, void 0, void 0, function* () {
                     var _a, _b;
@@ -49,24 +49,24 @@ class Package {
                         packageOut.version = initResults.packageVersion;
                         packageOut.repository = initResults.repository;
                         packageOut.description = initResults.description;
-                        const tagsSplit = (initResults.tags && initResults.tags.split(",")) || [];
+                        const tagsSplit = (initResults.tags && initResults.tags.split(',')) || [];
                         const tagsArray = (tagsSplit === null || tagsSplit === void 0 ? void 0 : tagsSplit.map((tag) => tag.trim())) || [];
                         packageOut.tags = tagsArray;
                         const sfmcEnv = (yield (0, bldrFileSystem_1.readBldrSfmcEnvTemplate)()) || null;
                         if (sfmcEnv) {
-                            packageOut["sfmcEnv"] = sfmcEnv;
+                            packageOut['sfmcEnv'] = sfmcEnv;
                         }
                         const availableContexts = Object.keys(manifestJSON);
                         availableContexts.shift();
                         for (const c in availableContexts) {
                             const context = availableContexts[c];
                             manifestJSON = yield (0, bldrFileSystem_1.readManifest)();
-                            let contextAssets = manifestJSON[context]["assets"];
+                            let contextAssets = manifestJSON[context]['assets'];
                             contextAssets = yield (0, bldrFileSystem_1.replaceBldrSfmcEnv)(JSON.stringify(contextAssets));
                             contextAssets = JSON.parse(contextAssets);
                             switch (context) {
-                                case "contentBuilder":
-                                    (0, display_1.displayLine)(`Gathering Dependencies for ${contextAssets.length} Assets`, "info");
+                                case 'contentBuilder':
+                                    (0, display_1.displayLine)(`Gathering Dependencies for ${contextAssets.length} Assets`, 'info');
                                     yield sdk.cli.contentBuilder.setContentBuilderPackageAssets(packageOut, contextAssets);
                                     const gatherDependencies = yield sdk.cli.contentBuilder.setContentBuilderDependenciesFromPackage(packageOut);
                                     const newDependencies = (gatherDependencies &&
@@ -76,27 +76,22 @@ class Package {
                                     const newContextKeys = (newDependencies && Object.keys(newDependencies)) || [];
                                     newContextKeys &&
                                         newContextKeys.length &&
-                                        (0, display_1.displayLine)(`Creating files for ${newContextKeys.join(", ")}`, "info");
+                                        (0, display_1.displayLine)(`Creating files for ${newContextKeys.join(', ')}`, 'info');
                                     for (const k in newContextKeys) {
-                                        (0, display_1.displayLine)(`Working on ${newContextKeys[k]}`, "progress");
-                                        let newAssets = newDependencies[newContextKeys[k]]["assets"];
+                                        (0, display_1.displayLine)(`Working on ${newContextKeys[k]}`, 'progress');
+                                        let newAssets = newDependencies[newContextKeys[k]]['assets'];
                                         yield (0, CreateFilesBasedOnContext_1.createEditableFilesBasedOnContext)(newContextKeys[k], newAssets);
                                     }
                                     break;
-                                case "dataExtension":
-                                    const dataExtensionPkgAssets = existingPkg &&
-                                        existingPkg[context] &&
-                                        existingPkg[context]["assets"]
-                                        ? yield (0, _utils_1.uniqueArrayByKey)([
-                                            ...existingPkg.dataExtension.assets,
-                                            ...contextAssets,
-                                        ], "name")
+                                case 'dataExtension':
+                                    const dataExtensionPkgAssets = existingPkg && existingPkg[context] && existingPkg[context]['assets']
+                                        ? yield (0, _utils_1.uniqueArrayByKey)([...existingPkg.dataExtension.assets, ...contextAssets], 'name')
                                         : contextAssets;
                                     dataExtensionPkgAssets &&
                                         dataExtensionPkgAssets.forEach((de) => {
                                             var _a;
                                             de.assetType = {
-                                                name: "dataextension",
+                                                name: 'dataextension',
                                             };
                                             delete de.categoryId;
                                             (_a = de.category) === null || _a === void 0 ? true : delete _a.id;
@@ -117,8 +112,8 @@ class Package {
                         });
                         let packageOutRendered = yield (0, bldrFileSystem_1.scrubBldrSfmcEnv)(JSON.stringify(packageOut));
                         packageOutRendered = JSON.parse(packageOutRendered);
-                        yield (0, fileSystem_2.createFile)("./package.manifest.json", JSON.stringify(packageOutRendered, null, 2));
-                        allowTracking() && (0, metrics_1.incrementMetric)("req_command_package");
+                        yield (0, fileSystem_2.createFile)('./package.manifest.json', JSON.stringify(packageOutRendered, null, 2));
+                        allowTracking() && (0, metrics_1.incrementMetric)('req_command_package');
                     }
                     catch (err) {
                         console.log(err);
