@@ -40,14 +40,17 @@ function CopadofySwitch(argv) {
         console.log("path string");
         console.log(rootDir);
 
-        console.log(rootDir.includes("dist/bin"));
-
         if ( rootDir.includes("dist/bin") ) {
+            // manifest
             updatedPath = rootDir.replace("dist/bin",".copado.manifest.json");
             console.log("run local path fix");
+            // root
+            rootDir = rootDir.replace("dist/bin","");
         }
         if ( rootDir.includes("npm-global/bin") ) {
-            updatedPath = rootDir.replace("bin",".copado.manifest.json");
+            updatedPath = rootDir.replace("/bin",".copado.manifest.json");
+            //root
+            rootDir = rootDir.replace("/bin","");
         }
 
         console.log("Manifest path");
@@ -110,11 +113,14 @@ function CopadofySwitch(argv) {
                 setTimeout(() => {
 
 
-                    let sourceFolderPath = rootdir + "/" + folderNamesByApp[app] + "/" + environmentFolders[source];
-                    let targetFolderPath = rootdir + "/" + folderNamesByApp[app] + "/" + environmentFolders[target];
+                    let sourceFolderPath = rootDir + "/" + folderNamesByApp[app] + "/" + environmentFolders[source];
+                    let targetFolderPath = rootDir + "/" + folderNamesByApp[app] + "/" + environmentFolders[target];
 
                     sourceFolderPath = sourceFolderPath.replace("dist/bin", "");
                     targetFolderPath = targetFolderPath.replace("dist/bin", "");
+
+                    sourceFolderPath = sourceFolderPath.replace("/bin", "");
+                    targetFolderPath = targetFolderPath.replace("/bin", "");
 
                     sourceFolderPath = sourceFolderPath.replace("//", "/");
                     targetFolderPath = targetFolderPath.replace("//", "/");
