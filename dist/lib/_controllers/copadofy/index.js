@@ -92,59 +92,62 @@ function CopadofySwitch(argv) {
             }
 
             try {
-                
-
-                let sourceFolderPath = folderNamesByApp[app] + "/" + environmentFolders[source];
-                let targetFolderPath = folderNamesByApp[app] + "/" + environmentFolders[target];
+                setTimeout(() => {
 
 
-
-                console.log("source " + sourceFolderPath);
-                console.log("target " + targetFolderPath);
-
-
-                // copy folder to new environment
-                fs_1.cp(sourceFolderPath, targetFolderPath, { recursive: true }, (err) => {
-                    if (err) {
-                        console.error(err);
-                        console.log("folders not copied or already exist");
-                    } else {
-                        console.log("folders copied");
-                    }
-                });
-
-                setTimeout(function() {
-                    console.log('This printed after about 5 seconds');
-                    let files = fs_1.readdirSync(targetFolderPath);
-                    console.log("start files loop");
-                    console.log(files);
-                    let i;
-                    // loop through all folders and rename
-                    for (i = 0; i < files.length; i++) {
-                        // loop through files
-    
-                        console.log("file is");
-                        console.log(files[i]);
-                        let renamePath = files[i].replace(source, target);
-                        fs_1.rename(targetFolderPath + '/' + files[i], targetFolderPath + '/' + renamePath, err => {
-                            if (err) {
-                                console.error(err);
-                            }
-                            // done
-                        });
-                    }
-                  }, 5000);
-                // get all files and folders in new sub directory
+                    let sourceFolderPath = rootdir + "/" + folderNamesByApp[app] + "/" + environmentFolders[source];
+                    let targetFolderPath = rootdir + "/" + folderNamesByApp[app] + "/" + environmentFolders[target];
 
 
-                // rename folder to match environment]
-                //fs.rename(targetFolderPath, '/Users/roger', err => {
-                    //if (err) {
-                        //console.error(err);
-                    //}
-                    // done
-                //});
 
+                    console.log("source " + sourceFolderPath);
+                    console.log("target " + targetFolderPath);
+
+
+                    // copy folder to new environment
+                    fs_1.cp(sourceFolderPath, targetFolderPath, { recursive: true }, (err) => {
+                        if (err) {
+                            console.error(err);
+                            console.log("folders not copied or already exist");
+                        } else {
+                            console.log("folders copied");
+                        }
+                    });
+
+                    setTimeout(function() {
+                        console.log('This printed after about 5 seconds');
+                        let files = fs_1.readdirSync(targetFolderPath);
+                        console.log("start files loop");
+                        console.log(files);
+                        let i;
+                        // loop through all folders and rename
+                        for (i = 0; i < files.length; i++) {
+                            // loop through files
+        
+                            console.log("file is");
+                            console.log(files[i]);
+                            let renamePath = files[i].replace(source, target);
+                            fs_1.rename(targetFolderPath + '/' + files[i], targetFolderPath + '/' + renamePath, err => {
+                                if (err) {
+                                    console.error(err);
+                                }
+                                // done
+                            });
+                        }
+                    }, 5000);
+                    // get all files and folders in new sub directory
+
+
+                    // rename folder to match environment]
+                    //fs.rename(targetFolderPath, '/Users/roger', err => {
+                        //if (err) {
+                            //console.error(err);
+                        //}
+                        // done
+                    //});
+
+                    console.log("Delayed for 5 seconds.");
+                }, 5000);
 
 
             } catch (err) {
