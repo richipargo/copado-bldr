@@ -98,6 +98,11 @@ function CopadofySwitch(argv) {
                     let sourceFolderPath = rootdir + "/" + folderNamesByApp[app] + "/" + environmentFolders[source];
                     let targetFolderPath = rootdir + "/" + folderNamesByApp[app] + "/" + environmentFolders[target];
 
+                    sourceFolderPath = sourceFolderPath.replace("dist/bin", "");
+                    targetFolderPath = targetFolderPath.replace("dist/bin", "");
+
+                    sourceFolderPath = sourceFolderPath.replace("//", "/");
+                    targetFolderPath = targetFolderPath.replace("//", "/");
 
 
                     console.log("source " + sourceFolderPath);
