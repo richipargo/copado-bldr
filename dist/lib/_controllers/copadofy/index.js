@@ -30,28 +30,24 @@ function CopadofySwitch(argv) {
          * Async Copado fixes can be executed here
          * Command Line node ./dist/bin/index.js copadofy
          */
-        console.log("Root path");
-        console.log(rootdir);
 
-        let rootDir = rootdir;
+        console.log("Root path");
+        console.log(process.cwd());
+
+        let rootDir = process.cwd();
 
         let updatedPath;
 
         console.log("path string");
         console.log(rootDir);
 
-        if ( rootDir.includes("dist/bin") ) {
-            // manifest
-            updatedPath = rootDir.replace("dist/bin",".copado.manifest.json");
-            console.log("run local path fix");
-            // root
-            rootDir = rootDir.replace("dist/bin","");
-        }
-        if ( rootDir.includes("npm-global/bin") ) {
-            updatedPath = rootDir.replace("/bin",".copado.manifest.json");
-            //root
-            rootDir = rootDir.replace("/bin","");
-        }
+
+
+        updatedPath = path_1.join(rootDir, ".copado.manifest.json");
+
+        console.log("run local path fix");
+        // root
+        rootDir = rootDir.replace("dist/bin","");
 
         console.log("Manifest path");
         console.log(updatedPath);
@@ -115,16 +111,6 @@ function CopadofySwitch(argv) {
 
                     let sourceFolderPath = rootDir + "/" + folderNamesByApp[app] + "/" + environmentFolders[source];
                     let targetFolderPath = rootDir + "/" + folderNamesByApp[app] + "/" + environmentFolders[target];
-
-                    sourceFolderPath = sourceFolderPath.replace("dist/bin", "");
-                    targetFolderPath = targetFolderPath.replace("dist/bin", "");
-
-                    sourceFolderPath = sourceFolderPath.replace("/bin", "");
-                    targetFolderPath = targetFolderPath.replace("/bin", "");
-
-                    sourceFolderPath = sourceFolderPath.replace("//", "/");
-                    targetFolderPath = targetFolderPath.replace("//", "/");
-
 
                     console.log("source " + sourceFolderPath);
                     console.log("target " + targetFolderPath);
