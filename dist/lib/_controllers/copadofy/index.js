@@ -33,7 +33,22 @@ function CopadofySwitch(argv) {
         console.log("Root path");
         console.log(rootdir);
 
-        let updatedPath = rootdir.replace("dist/bin",".copado.manifest.json");
+        let rootDir = rootdir;
+
+        let updatedPath;
+
+        console.log("path string");
+        console.log(rootDir);
+
+        console.log(rootDir.includes("dist/bin"));
+
+        if ( rootDir.includes("dist/bin") ) {
+            updatedPath = rootDir.replace("dist/bin",".copado.manifest.json");
+            console.log("run local path fix");
+        }
+        if ( rootDir.includes("npm-global/bin") ) {
+            updatedPath = rootDir.replace("bin",".copado.manifest.json");
+        }
 
         console.log("Manifest path");
         console.log(updatedPath);
