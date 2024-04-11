@@ -21,30 +21,22 @@ const setCloudPage = (sfmcUpdateObject, updatedContent) => __awaiter(void 0, voi
             },
         },
         assetType: {
-            name: "webpage",
+            name: 'webpage',
             id: 205,
         },
     };
-    if (Object.prototype.hasOwnProperty.call(sfmcUpdateObject, "category")) {
+    if (Object.prototype.hasOwnProperty.call(sfmcUpdateObject, 'category')) {
         returnObject.category = {
-            id: sfmcUpdateObject &&
-                sfmcUpdateObject.category &&
-                sfmcUpdateObject.category.id,
-            name: sfmcUpdateObject &&
-                sfmcUpdateObject.category &&
-                sfmcUpdateObject.category.name,
-            parentId: sfmcUpdateObject &&
-                sfmcUpdateObject.category &&
-                sfmcUpdateObject.category.parentId,
-            folderPath: sfmcUpdateObject &&
-                sfmcUpdateObject.category &&
-                sfmcUpdateObject.category.folderPath,
+            id: sfmcUpdateObject && sfmcUpdateObject.category && sfmcUpdateObject.category.id,
+            name: sfmcUpdateObject && sfmcUpdateObject.category && sfmcUpdateObject.category.name,
+            parentId: sfmcUpdateObject && sfmcUpdateObject.category && sfmcUpdateObject.category.parentId,
+            folderPath: sfmcUpdateObject && sfmcUpdateObject.category && sfmcUpdateObject.category.folderPath,
         };
     }
-    if (Object.prototype.hasOwnProperty.call(sfmcUpdateObject, "id")) {
+    if (Object.prototype.hasOwnProperty.call(sfmcUpdateObject, 'id')) {
         returnObject.id = sfmcUpdateObject.id;
     }
-    if (Object.prototype.hasOwnProperty.call(sfmcUpdateObject, "customerKey")) {
+    if (Object.prototype.hasOwnProperty.call(sfmcUpdateObject, 'customerKey')) {
         returnObject.customerKey = sfmcUpdateObject.customerKey;
     }
     return returnObject;

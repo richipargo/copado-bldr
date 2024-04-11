@@ -63,7 +63,7 @@ const ConfigSwitch = (req, argv) => __awaiter(void 0, void 0, void 0, function* 
     if (argv.debug) {
         return toggleDebug();
     }
-    if (argv["clear-session"]) {
+    if (argv['clear-session']) {
         return clearSession();
     }
     return;

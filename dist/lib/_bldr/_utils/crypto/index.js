@@ -10,9 +10,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Crypto = void 0;
-const crypto = require("crypto");
+const crypto = require('crypto');
 //import { getPassword, setPassword } from "keytar-sync";
-const algorithm = "aes-256-ctr";
+const algorithm = 'aes-256-ctr';
 class Crypto {
     constructor() {
         /**
@@ -23,16 +23,16 @@ class Crypto {
          */
         this.generateHexString = (length) => {
             //Use crypto.getRandomValues if available
-            if (typeof crypto.getRandomValues === "function") {
+            if (typeof crypto.getRandomValues === 'function') {
                 var tmp = new Uint8Array(Math.max(~~length / 2));
                 crypto.getRandomValues(tmp);
                 return Array.from(tmp)
-                    .map((n) => ("0" + n.toString(16)).substring(-2))
-                    .join("")
+                    .map((n) => ('0' + n.toString(16)).substring(-2))
+                    .join('')
                     .substring(0, length);
             }
             // fallback to Math.getRandomValues
-            var ret = "";
+            var ret = '';
             while (ret.length < length) {
                 ret += Math.random().toString(16).substring(2);
             }
@@ -64,14 +64,11 @@ class Crypto {
             const ENCODE = false;
             const SALT = false;
             if (!ENCODE || !SALT) {
-                throw new Error("Encryption key or Salt not found");
+                throw new Error('Encryption key or Salt not found');
             }
             const cipher = crypto.createCipheriv(algorithm, ENCODE, iv);
-            const encrypted = Buffer.concat([
-                cipher.update(`${text}${SALT}`),
-                cipher.final(),
-            ]);
-            return `${iv.toString("hex")}@|@${encrypted.toString("hex")}`;
+            const encrypted = Buffer.concat([cipher.update(`${text}${SALT}`), cipher.final()]);
+            return `${iv.toString('hex')}@|@${encrypted.toString('hex')}`;
         });
     }
     /**
@@ -82,13 +79,10 @@ class Crypto {
     decrypt(hash) {
         return __awaiter(this, void 0, void 0, function* () {
             const ENCODE = false;
-            const SALT = "false";
-            const parts = hash.split("@|@");
-            const decipher = crypto.createDecipheriv(algorithm, ENCODE, Buffer.from(parts[0], "hex"));
-            const decrypted = Buffer.concat([
-                decipher.update(Buffer.from(parts[1], "hex")),
-                decipher.final(),
-            ]);
+            const SALT = 'false';
+            const parts = hash.split('@|@');
+            const decipher = crypto.createDecipheriv(algorithm, ENCODE, Buffer.from(parts[0], 'hex'));
+            const decrypted = Buffer.concat([decipher.update(Buffer.from(parts[1], 'hex')), decipher.final()]);
             let decryptedStr = decrypted.toString();
             return decryptedStr.substring(0, decryptedStr.length - SALT.length);
         });

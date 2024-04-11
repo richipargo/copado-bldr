@@ -8,11 +8,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.addNewFolders = void 0;
 const _1 = require(".");
 const bldrFileSystem_1 = require("../../_utils/bldrFileSystem");
+const path_1 = __importDefault(require("path"));
 const manifestJSON_1 = require("../../_utils/bldrFileSystem/manifestJSON");
+//var manifestJSON_1 = require("../../../copado.manifest.json");
+//const manifestJSON_1 = path_1.default.join(process.cwd(), '.copado.manifest.json');
 const display_1 = require("../../_utils/display");
 const state_1 = require("../_processes/state");
 const { debug } = new state_1.State();
@@ -23,17 +29,28 @@ const { debug } = new state_1.State();
  * @param {string} dirPath project root folder
  */
 const addNewFolders = (sdk, folder) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("folders passed to function");
+    console.log(folder);
     try {
         let createdFolderCount = 0;
         // Split path into array to check each individually
-        const stashItemFolderArray = folder.path.split("/");
+        const stashItemFolderArray = folder.path.split('/');
         // Grab root folder from path
         const rootContextFolder = stashItemFolderArray.shift();
         // Get .local.manifest.json file
         let manifestJSON = yield (0, bldrFileSystem_1.readManifest)();
-        const manifestAssetCategories = manifestJSON[folder.context.context]["assets"].map((manifestAsset) => manifestAsset && manifestAsset.category);
-        let manifestFolderCategories = manifestJSON[folder.context.context]["folders"].map((manifestFolder) => manifestFolder);
-        let manifestFolders = yield (0, _1.uniqueArrayByKey)([...manifestAssetCategories, ...manifestFolderCategories], "folderPath");
+        console.log("the JSON manifest when adding new folders");
+
+
+        // add missing folder object to manifest call
+
+
+        console.log(manifestJSON);
+        const manifestAssetCategories = manifestJSON[folder.context.context]['assets'].map((manifestAsset) => manifestAsset && manifestAsset.category);
+        console.log("manifest categories");
+        console.log(manifestAssetCategories);
+        let manifestFolderCategories = manifestJSON[folder.context.context]['folders'].map((manifestFolder) => manifestFolder);
+        let manifestFolders = yield (0, _1.uniqueArrayByKey)([...manifestAssetCategories, ...manifestFolderCategories], 'folderPath');
         const createdFoldersOutput = [];
         let checkPath = rootContextFolder;
         let parentId;
@@ -43,27 +60,37 @@ const addNewFolders = (sdk, folder) => __awaiter(void 0, void 0, void 0, functio
             const folderName = stashItemFolderArray[stashItemFolder];
             let updatedFolder = 0;
             // Compile path to check against
-            checkPath = `${checkPath}${"/"}${folderName}`;
+            checkPath = `${checkPath}${'/'}${folderName}`;
             manifestJSON = yield (0, bldrFileSystem_1.readManifest)();
-            manifestFolderCategories = manifestJSON[folder.context.context]["folders"].map((manifestFolder) => manifestFolder);
-            manifestFolders = yield (0, _1.uniqueArrayByKey)([...manifestAssetCategories, ...manifestFolderCategories], "folderPath");
+            manifestFolderCategories = manifestJSON[folder.context.context]['folders'].map((manifestFolder) => manifestFolder);
+            manifestFolders = yield (0, _1.uniqueArrayByKey)([...manifestAssetCategories, ...manifestFolderCategories], 'folderPath');
+
+            console.log("manifest folders");
+            console.log(manifestFolders);
             // Check if folder path exists in .local.manifest.json
             const folderIndex = manifestFolders.findIndex((manifestFolder) => checkPath && manifestFolder.folderPath.includes(checkPath));
+            console.log("folder index");
+            console.log(folderIndex);
+            console.log("path to check");
+            console.log(checkPath);
             // If folder does not exist
             if (folderIndex === -1) {
-                if (typeof parentId === "undefined") {
+                console.log("parent id ");
+                console.log(parentId);
+                if (typeof parentId === 'undefined') {
+                    console.log("parent id undefined");
                     const parentFolderResponse = yield sdk.sfmc.folder.search({
                         contentType: folder.context.contentType,
-                        searchKey: "Name",
+                        searchKey: 'Name',
                         searchTerm: folder.context.name,
                     });
-                    debug("Search for Parent Folder", "info", parentFolderResponse);
-                    if (parentFolderResponse.OverallStatus !== "OK") {
+                    debug('Search for Parent Folder', 'info', parentFolderResponse);
+                    if (parentFolderResponse.OverallStatus !== 'OK') {
                         throw new Error(parentFolderResponse.OverallStatus);
                     }
-                    if (!Object.prototype.hasOwnProperty.call(parentFolderResponse, "Results") &&
+                    if (!Object.prototype.hasOwnProperty.call(parentFolderResponse, 'Results') &&
                         parentFolderResponse.Results.length > 0) {
-                        throw new Error("No Results Found for Root Folder");
+                        throw new Error('No Results Found for Root Folder');
                     }
                     const parentFolderObject = {
                         id: parentFolderResponse.Results[0].ID,
@@ -76,7 +103,7 @@ const addNewFolders = (sdk, folder) => __awaiter(void 0, void 0, void 0, functio
                     });
                     parentId = parentFolderResponse.Results[0].ID;
                 }
-                debug("Create Folder Request", "info", {
+                debug('Create Folder Request', 'info', {
                     contentType: folder.context.contentType,
                     name: folderName,
                     parentId,
@@ -87,19 +114,20 @@ const addNewFolders = (sdk, folder) => __awaiter(void 0, void 0, void 0, functio
                     name: folderName,
                     parentId,
                 });
-                debug("Create Folder Response", "info", createFolder);
+                debug('Create Folder Response', 'info', createFolder);
                 if (!createFolder ||
-                    (typeof createFolder === "string" &&
-                        createFolder.includes("Please select a different Name."))) {
+                    (typeof createFolder === 'string' && createFolder.includes('Please select a different Name.'))) {
                     const existingFolder = yield addExistingFolderToManifest(sdk, {
                         context: folder.context,
                         folder: folderName,
                         checkPath,
                         parentId,
                     });
+                    console.log("existing parent id is");
+                    console.log(parentId);
                     parentId = existingFolder && existingFolder.id;
                 }
-                else if (createFolder.StatusCode === "Error") {
+                else if (createFolder.StatusCode === 'Error') {
                     throw new Error(createFolder.StatusMessage);
                 }
                 else {
@@ -107,12 +135,9 @@ const addNewFolders = (sdk, folder) => __awaiter(void 0, void 0, void 0, functio
                     // Folder permissions my not allow child folders, so when exception is thrown create will retry
                     // do/while will check until retry is done and folder is created
                     do {
-                        const newFolderId = (createFolder &&
-                            createFolder.Results &&
-                            createFolder.Results[0].NewID) ||
-                            null;
+                        const newFolderId = (createFolder && createFolder.Results && createFolder.Results[0].NewID) || null;
                         if (newFolderId) {
-                            (0, display_1.displayLine)(`${folderName} has been created; CategoryId: ${newFolderId}`, "success");
+                            (0, display_1.displayLine)(`${folderName} has been created; CategoryId: ${newFolderId}`, 'success');
                             const createdFolderObject = {
                                 id: newFolderId,
                                 name: folderName,
@@ -122,23 +147,20 @@ const addNewFolders = (sdk, folder) => __awaiter(void 0, void 0, void 0, functio
                             yield (0, manifestJSON_1.updateManifest)(folder.context.context, {
                                 folders: [createdFolderObject],
                             });
-                            parentId =
-                                createFolder &&
-                                    createFolder.Results &&
-                                    createFolder.Results[0].NewID;
+                            parentId = createFolder && createFolder.Results && createFolder.Results[0].NewID;
                             createdFoldersOutput.push(createdFolderObject);
                             createdFolderCount++;
                         }
                         updatedFolder++;
-                    } while (typeof createFolder !== "undefined" && updatedFolder === 0);
+                    } while (typeof createFolder !== 'undefined' && updatedFolder === 0);
                 }
             }
             else {
+                console.log("skipping folder creation steps");
                 parentId = manifestFolders[folderIndex].id;
             }
         }
-        createdFolderCount > 0 &&
-            (0, display_1.displayLine)(`>> ${createdFolderCount} folders created`);
+        createdFolderCount > 0 && (0, display_1.displayLine)(`>> ${createdFolderCount} folders created`);
         return createdFoldersOutput;
     }
     catch (err) {
@@ -155,12 +177,12 @@ exports.addNewFolders = addNewFolders;
 const addExistingFolderToManifest = (sdk, request) => __awaiter(void 0, void 0, void 0, function* () {
     const existingFolder = yield sdk.sfmc.folder.search({
         contentType: request.context.contentType,
-        searchKey: "Name",
+        searchKey: 'Name',
         searchTerm: request.folder,
         parentId: request.parentId,
     });
-    if (existingFolder.OverallStatus === "OK" &&
-        Object.prototype.hasOwnProperty.call(existingFolder, "Results") &&
+    if (existingFolder.OverallStatus === 'OK' &&
+        Object.prototype.hasOwnProperty.call(existingFolder, 'Results') &&
         existingFolder.Results.length) {
         const results = existingFolder.Results;
         const folderObject = results.find((folderResult) => folderResult.Name === request.folder);

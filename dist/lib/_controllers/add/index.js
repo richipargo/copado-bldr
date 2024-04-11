@@ -24,13 +24,13 @@ const AddSwitch = (req, argv) => __awaiter(void 0, void 0, void 0, function* () 
     /**
      * Configure New Instance
      */
-    if (argv && argv._ && argv._[1] && argv._[1] === ".") {
+    if (argv && argv._ && argv._[1] && argv._[1] === '.') {
         yield addAllFiles();
     }
     /**
      * Add specific list of files based on folder paths
      */
-    if (argv && argv._ && argv._[1] && argv._[1] !== ".") {
+    if (argv && argv._ && argv._[1] && argv._[1] !== '.') {
         yield addFiles(argv);
     }
     return;

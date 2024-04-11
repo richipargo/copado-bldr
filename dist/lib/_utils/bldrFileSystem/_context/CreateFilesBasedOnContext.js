@@ -6,11 +6,11 @@ const CreateLocalFiles_2 = require("./automationStudio/CreateLocalFiles");
 const CreateLocalFiles_3 = require("./dataExtension/CreateLocalFiles");
 const createEditableFilesBasedOnContext = (context, assets) => {
     switch (context) {
-        case "contentBuilder":
+        case 'contentBuilder':
             return (0, CreateLocalFiles_1.createContentBuilderEditableFiles)(assets);
-        case "automationStudio":
+        case 'automationStudio':
             return (0, CreateLocalFiles_2.createAutomationStudioEditableFiles)(assets);
-        case "dataExtension":
+        case 'dataExtension':
             return (0, CreateLocalFiles_3.createEmailStudioEditableFiles)(assets);
     }
 };

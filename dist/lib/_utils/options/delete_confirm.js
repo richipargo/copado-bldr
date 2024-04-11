@@ -2,8 +2,8 @@
 module.exports = {
     interactive: { default: true },
     confirmDelete: {
-        type: "confirm",
+        type: 'confirm',
         describe: `Please confirm deletion`,
-        prompt: "always",
+        prompt: 'always',
     },
 };

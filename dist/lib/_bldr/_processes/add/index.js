@@ -13,9 +13,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Add = void 0;
-const sfmcContext = require("@basetime/bldr-sfmc-sdk/dist/sfmc/utils/sfmcContextMapping");
-const { MappingByAssetType, } = require("@basetime/bldr-sfmc-sdk/dist/sfmc/utils/contentBuilderAssetTypes");
-const getFiles = require("node-recursive-directory");
+const sfmcContext = require('@basetime/bldr-sfmc-sdk/dist/sfmc/utils/sfmcContextMapping');
+const { MappingByAssetType } = require('@basetime/bldr-sfmc-sdk/dist/sfmc/utils/contentBuilderAssetTypes');
+const getFiles = require('node-recursive-directory');
 const promises_1 = require("fs/promises");
 const lodash_remove_1 = __importDefault(require("lodash.remove"));
 const yargs_interactive_1 = __importDefault(require("yargs-interactive"));
@@ -27,9 +27,13 @@ const state_1 = require("../state");
 const initiate_1 = require("../initiate");
 const path_1 = __importDefault(require("path"));
 const bldrFileSystem_1 = require("../../../_utils/bldrFileSystem");
+const manifestJSON_1 = require("../../../_utils/bldrFileSystem/manifestJSON");
+const path = require('path');
 const { getState, debug } = new state_1.State();
 const { saveStash, displayStashStatus } = new stash_1.Stash();
 const { updateKeys } = new initiate_1.Initiate();
+const fs_1 = require('fs');
+
 /**
  * Handles all Configuration commands
  * @property {object} coreConfiguration
@@ -62,12 +66,14 @@ class Add {
                     const normalizedPath = path_1.default.normalize(argvArr[a]);
                     contextFiles.push(path_1.default.join(cwdPath, normalizedPath));
                 }
+                console.log(contextFiles);
                 // Gather all file content/details for each file path
                 // Separate out existing files and newly created files
                 // Add existing files to the Stash with the updated file content
                 const organizedFiles = yield this.gatherAllFiles(contextFiles, rootPath);
                 const { putFiles, postFiles, postFileOptions } = organizedFiles;
                 putFiles && putFiles.length && (yield saveStash(putFiles));
+                console.log(putFiles);
                 yield this.buildNewAssetObjects({
                     postFileOptions,
                     postFiles,
@@ -88,32 +94,43 @@ class Add {
         this.addAllFiles = (packageManifestJSON = null) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const stateObject = getState();
+                console.log(stateObject);
+                if (!stateObject.instance) {
+                    stateObject.instance = "testauto";
+                }
                 const instance = stateObject && stateObject.instance;
+                console.log(instance);
                 // Get the root directory for the project being worked on
                 const rootPath = bldrFileSystem_1.normalizedRoot;
+                console.log(rootPath);
                 // Get the current working directory that the [add] command was triggered
                 const cwdPath = process.cwd();
-                debug("Folder Path", "info", { cwdPath, rootPath });
+                debug('Folder Path', 'info', { cwdPath, rootPath });
                 // Identify the context for request
                 const contextsArray = sfmcContext.sfmc_context_mapping.map((context) => context.name);
+                console.log(contextsArray);
                 // Store all complete file paths for files in CWD and subdirectories
                 let contextFiles = [];
                 // get files from current working directory and subdirectories
-                contextFiles.push(...(yield getFiles(path_1.default.resolve("./"))));
+                contextFiles.push(...(yield getFiles(path_1.default.resolve('./'))));
+                //console.log(contextFiles);
                 const filteredContextFiles = contextFiles
                     .map((filePath) => {
                     const isContextFilePath = contextsArray.some((context) => {
                         return filePath.includes(context);
                     });
-                    return (isContextFilePath && filePath) || "";
+                    return (isContextFilePath && filePath) || '';
                 })
                     .filter(Boolean);
+
+                console.log(filteredContextFiles);
                 // Gather all file content/details for each file path
                 // Separate out existing files and newly created files
                 // Add existing files to the Stash with the updated file content
                 if (!packageManifestJSON) {
                     const organizedFiles = yield this.gatherAllFiles(filteredContextFiles, rootPath);
-                    debug("organizedFiles", "info", organizedFiles);
+                    console.log(organizedFiles);
+                    debug('organizedFiles', 'info', organizedFiles);
                     const { putFiles, postFiles, postFileOptions } = organizedFiles;
                     putFiles && putFiles.length && (yield saveStash(putFiles));
                     yield this.buildNewAssetObjects({
@@ -125,7 +142,7 @@ class Add {
                 }
                 else {
                     const organizedFiles = yield this.gatherAllFilesFromPackage(contextFiles);
-                    debug("organizedFiles in else", "info", organizedFiles);
+                    debug('organizedFiles in else', 'info', organizedFiles);
                     const { postFiles } = organizedFiles;
                     postFiles && postFiles.length && (yield saveStash(postFiles));
                 }
@@ -147,7 +164,7 @@ class Add {
             const postFiles = [];
             const rootPath = yield (0, fileSystem_1.getRootPath)();
             // Get manifest JSON file
-            const manifestPath = rootPath && path_1.default.join(rootPath, ".copado.manifest.json");
+            const manifestPath = rootPath && path_1.default.join(rootPath, '.copado.manifest.json');
             // Read ManifestJSON file from root dir
             const manifestFile = manifestPath && (yield (0, promises_1.readFile)(manifestPath));
             const manifestJSON = JSON.parse(manifestFile);
@@ -158,20 +175,20 @@ class Add {
                 const { context } = (0, _utils_1.getFilePathDetails)(path_1.default.normalize(filePath));
                 return filePath.includes(context.name) && context;
             });
-            debug("availableContexts", "info", availableContexts);
+            debug('availableContexts', 'info', availableContexts);
             yield updateKeys();
             for (const context in availableContexts) {
-                const folderNameRegex = new RegExp("[\\\\/]+" + availableContexts[context].name + "[\\\\/]+", "i");
+                const folderNameRegex = new RegExp('[\\\\/]+' + availableContexts[context].name + '[\\\\/]+', 'i');
                 const contextPaths = contextFiles.filter((file) => folderNameRegex.test(file));
                 const bldrContext = availableContexts[context].context;
-                const manifestContextAssets = manifestJSON[bldrContext] && manifestJSON[bldrContext]["assets"];
-                debug("manifestContextAssets", "info", manifestContextAssets);
+                const manifestContextAssets = manifestJSON[bldrContext] && manifestJSON[bldrContext]['assets'];
+                debug('manifestContextAssets', 'info', manifestContextAssets);
                 // If the Manifest JSON file has an assets Array process files
                 if (manifestContextAssets) {
                     // Iterate through files array to check if existing files
                     for (const path in contextPaths) {
                         const systemFilePath = contextPaths[path];
-                        debug("systemFilePath", "info", systemFilePath || "nothing here");
+                        debug('systemFilePath', 'info', systemFilePath || 'nothing here');
                         // Check Manifest assets if the file path exists
                         // Gets folder path from the manifest asset
                         // Splits system file path into an array
@@ -180,14 +197,12 @@ class Add {
                         // Tests if the system file name is the same as the assets name
                         const existingAsset = manifestContextAssets.find((asset) => {
                             const { name, formattedDir } = (0, _utils_1.getFilePathDetails)(systemFilePath);
-                            return (formattedDir.endsWith(asset.category.folderPath) &&
-                                name === asset.name &&
-                                asset);
+                            return formattedDir.endsWith(asset.category.folderPath) && name === asset.name && asset;
                         });
                         if (existingAsset) {
                             const fileContentRaw = yield (0, promises_1.readFile)(systemFilePath);
                             let fileContent = fileContentRaw.toString();
-                            debug("existing - fileContentRaw", "info", fileContentRaw || "nothing here");
+                            debug('existing - fileContentRaw', 'info', fileContentRaw || 'nothing here');
                             const objectIdKey = (_a = existingAsset.assetType) === null || _a === void 0 ? void 0 : _a.objectIdKey;
                             const existingSchema = {
                                 path: systemFilePath,
@@ -216,7 +231,7 @@ class Add {
                             const { name, dirName, dir, formattedDir, projectDir } = yield (0, _utils_1.getFilePathDetails)(systemFilePath);
                             const fileContentRaw = yield (0, promises_1.readFile)(systemFilePath);
                             let fileContent = fileContentRaw.toString();
-                            debug("new - fileContentRaw", "info", fileContent || "nothing here");
+                            debug('new - fileContentRaw', 'info', fileContent || 'nothing here');
                             fileContent = yield (0, bldrFileSystem_1.scrubBldrSfmcEnv)(fileContent);
                             postFiles.push({
                                 name: name,
@@ -228,12 +243,12 @@ class Add {
                                 },
                                 fileContent,
                             });
-                            if (availableContexts[context]["context"] === "contentBuilder") {
+                            if (availableContexts[context]['context'] === 'contentBuilder') {
                                 postFileOptions[bldrId] = {
-                                    type: "list",
+                                    type: 'list',
                                     describe: `What type of asset is ${dirName}/${name}`,
-                                    choices: ["htmlemail", "codesnippetblock", "htmlblock"],
-                                    prompt: "always",
+                                    choices: ['htmlemail', 'codesnippetblock', 'htmlblock'],
+                                    prompt: 'always',
                                 };
                             }
                             // Once stash file is processed remove the filepath from items waiting for processing
@@ -243,7 +258,7 @@ class Add {
                 }
             }
             // Add interactive key to yargs-interactive object
-            postFileOptions["interactive"] = {
+            postFileOptions['interactive'] = {
                 default: true,
             };
             return {
@@ -262,9 +277,7 @@ class Add {
             const postFiles = [];
             const rootPath = (0, fileSystem_1.getRootPath)();
             // Get manifest JSON file
-            const packagePath = rootPath
-                ? `${rootPath}package.manifest.json`
-                : `./package.manifest.json`;
+            const packagePath = rootPath ? `${rootPath}package.manifest.json` : `./package.manifest.json`;
             // Read ManifestJSON file from root dir
             const packageFile = yield (0, promises_1.readFile)(packagePath);
             const packageJSON = JSON.parse(packageFile);
@@ -276,7 +289,7 @@ class Add {
             for (const context in availableContexts) {
                 const contextPaths = contextFiles.filter((file) => file.includes(availableContexts[context].name));
                 const bldrContext = availableContexts[context].context;
-                const manifestContextAssets = packageJSON[bldrContext] && packageJSON[bldrContext]["assets"];
+                const manifestContextAssets = packageJSON[bldrContext] && packageJSON[bldrContext]['assets'];
                 // If the Manifest JSON file has an assets Array process files
                 if (manifestContextAssets) {
                     // Iterate through files array to check if existing files
@@ -291,9 +304,7 @@ class Add {
                         // Tests if the system file name is the same as the assets name
                         const packageAsset = manifestContextAssets.find((asset) => {
                             const { name, formattedDir } = (0, _utils_1.getFilePathDetails)(systemFilePath);
-                            return (formattedDir.endsWith(asset.category.folderPath) &&
-                                name === asset.name &&
-                                asset);
+                            return formattedDir.endsWith(asset.category.folderPath) && name === asset.name && asset;
                         });
                         const fileContentRaw = yield (0, promises_1.readFile)(systemFilePath);
                         const fileContent = fileContentRaw.toString();
@@ -328,7 +339,7 @@ class Add {
          * @param {string} dirPath project directory path
          * @returns user prompts for configuration
          */
-        this.buildNewAssetObjects = (request) => __awaiter(this, void 0, void 0, function* () {
+        /**this.buildNewAssetObjects = (request) => __awaiter(this, void 0, void 0, function* () {
             const options = request && request.postFileOptions;
             return (0, yargs_interactive_1.default)()
                 .usage("$0 <command> [args]")
@@ -357,6 +368,109 @@ class Add {
                     (0, display_1.displayLine)(`Create Asset Error: ${err.message}`);
                 }
             }));
+        });**/
+        
+        this.buildNewAssetObjects = (request) => __awaiter(this, void 0, void 0, function* () {
+            const options = request && request.postFileOptions;
+            console.log("the options are");
+            console.log(options);
+            // {
+            // _: [ 'add', '.' ],
+            //  interactive: true,
+            //  '$0': 'dist/bin/index.js',
+            //  'd6316ea4-998d-45cd-9d7a-0eb3aec81018': 'htmlblock'
+            //}
+
+            try {
+
+                console.log("current manifest file");
+                console.log(manifestJSON_1);
+                console.log("current request");
+                console.log(request);
+                console.log("current bldr object");
+                console.log(request.postFiles.bldr);
+                console.log("first key name from postFiles");
+                var firstKey = Object.keys(request.postFileOptions)[0];
+                
+                console.log("the first key");
+                console.log(firstKey);
+                // get count of options and loop
+                let i;
+                let files = request.postFiles;
+                console.log("Current directory:", __dirname);
+
+                //let copadoManifestPath ='../../../' + '.copado.manifest.json';
+
+                console.log("path from node");
+                console.log(path._makeLong('.copado.manifest.json'));
+                let copadoManifestPath = path._makeLong('.copado.manifest.json');
+
+                const noOptionFiles = request.postFiles.filter((noOptionPost) => !Object.keys(firstKey).includes(noOptionPost.bldr.bldrId));
+                for (const noOpt in noOptionFiles) {
+                    const postFile = noOptionFiles[noOpt];
+                    saveStash(postFile);
+                }
+
+                fs_1.readFile(copadoManifestPath, 'utf8', (err, data) => {
+                    if (err) {
+                        console.log("error finding file");
+                        console.error(err);
+                        return;
+                    } else {
+
+                        console.log("file data");
+                        console.log(data);
+                        let parsedManifest = JSON.parse(data);
+                        console.log("parsed manifest is");
+                        console.log(parsedManifest);
+                        
+                        let addType = Object.keys(parsedManifest)[1];
+                        console.log("add type");
+                        console.log(addType);
+                        for (i = 0; i < files.length; i++ ) {
+        
+                            // the asset name
+                            let assetName = files[i].name;
+                            console.log("the asset name is");
+                            console.log(assetName);
+                            
+                            let assetsObject = parsedManifest[addType].assets;
+                            console.log("asset object");
+                            console.log(assetsObject);
+                            let j;
+                            let assetType;
+                            if ( addType == "contentBuilder") {
+                                for (j = 0; j < assetsObject.length; j++) {
+                                    if ( assetsObject[j].name == assetName ) {
+                                        console.log("found match");
+                                        assetType = assetsObject[j].assetType.name;
+                                        console.log("the matching asset type is " + assetType);
+    
+                                        let postFile = request.postFiles.find((fileObject) => fileObject.bldr.bldrId === firstKey);
+                                        console.log("post file");
+                                        console.log(postFile);
+                                        if (postFile) {
+                                        // Get Asset Type from user input
+                                            if (firstKey) {
+                                                postFile.assetType = MappingByAssetType(assetType);
+                                                //postFile.assetType = assetType;
+                                            }
+                                            saveStash(postFile);
+                                        }
+                                    }
+                                }
+                            } else {
+                                saveStash(request.postFiles);
+                            }
+                        }
+                    }
+                });
+                return true;
+            }
+            catch (err) {
+                (0, display_1.displayLine)(`Create Asset Error: ${err.message}`);
+            }
+
         });
     }
 }
