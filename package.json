@@ -1,6 +1,6 @@
 {
   "name": "bldr",
-  "version": "1.8.6",
+  "version": "1.8.7",
   "description": "CLI application for SFMC Development workflow and package deployment",
   "main": "./dist/bin/index.js",
   "scripts": {
